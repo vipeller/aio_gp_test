@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_URL="https://raw.githubusercontent.com/vipeller/aio_gp_test/main/scripts"
+REPO_URL="https://raw.githubusercontent.com/vipeller/aio_gp_test/main/aio-tools"
 
 SCRIPTS=(
   discover_env.sh
