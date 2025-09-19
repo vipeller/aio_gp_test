@@ -13,6 +13,7 @@ SCHEMAS_DIR="$TARGET_DIR/iotops"
 SCRIPTS=(
   "discover_env.sh"
   "deploy_opc_publisher_template.sh"
+  "deploy_opc_publisher_instance.sh"
 )
 
 SCHEMA_FILES=(
