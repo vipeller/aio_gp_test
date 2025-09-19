@@ -99,7 +99,7 @@ else
 fi
 
 # -------- Confirm kubectl connectivity --------
-if ! kubectl version --short >/dev/null 2>&1; then
+if ! kubectl version >/dev/null 2>&1; then
   err "kubectl is not connected to a cluster. Configure your kube context, then re-run."
   exit 1
 fi
