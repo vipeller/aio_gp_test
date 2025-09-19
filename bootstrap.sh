@@ -57,7 +57,7 @@ mkdir -p "$SCRIPTS_DIR" "$SCHEMAS_DIR"
 # Fetch scripts
 log "Downloading scripts…"
 for f in "${SCRIPTS[@]}"; do
-  fetch "$f" "$SCRIPTS_DIR/$f"
+  fetch "aio-tools/$f" "$SCRIPTS_DIR/$f"
 done
 
 # Make scripts executable
@@ -69,7 +69,7 @@ ok "Scripts ready in $SCRIPTS_DIR"
 if ((${#SCHEMA_FILES[@]})); then
   log "Downloading iotops schema files…"
   for f in "${SCHEMA_FILES[@]}"; do
-    fetch "iotops/$f" "$SCHEMAS_DIR/$f" || warn "Skipped schema $f (not found?)"
+    fetch "aio-tools/iotops/$f" "$SCHEMAS_DIR/$f" || warn "Skipped schema $f (not found?)"
   done
   ok "Schemas ready in $SCHEMAS_DIR"
 else
