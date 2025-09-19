@@ -91,6 +91,18 @@ export COUNT=1
 
 This script waits for a discovered asset with prefix `fullmachinetool-` and onboards it into ADR.
 
+### 7) Deploy the **Eventstream**
+
+```bash
+# Optional: change the display name (default: DTB-GP-Test)
+export DISPLAY_NAME="DTB-GP-Custom"
+
+./deploy_eventstream.sh
+```
+
+This creates an Eventstream.
+The script also fetches the source connection credentials and saves them to `./creds/dtb_hub_cred.json` — **treat this file as a secret and delete it after your deployment is configured.**
+
 
 ---
 
