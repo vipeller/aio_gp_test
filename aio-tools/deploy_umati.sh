@@ -16,12 +16,12 @@ err()  { printf '[%s] [ERR] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
 : "${NAMESPACE:?set NAMESPACE}"                   # Kubernetes namespace to deploy into
 
 # -------- optional inputs (ENV) --------
-COUNT="${COUNT:-1}"                              # number of simulator instances
-# Use packaged chart by default:
-HELM_CHART_PATH="${HELM_CHART_PATH:-./aio-tools/charts/umati-sample-server-1.0-alpha.1.tgz}"
+CHART_PATH_IN_REPO="${CHART_PATH_IN_REPO:-aio-tools/charts/umati-sample-server-1.0-alpha.1.tgz}"
 
-# Alternatively, support a direct URL if provided:
-HELM_CHART_URL="${HELM_CHART_URL:-}"
+# To use a local chart file, set HELM_CHART_PATH.
+HELM_CHART_PATH="${HELM_CHART_PATH:-}"
+
+COUNT="${COUNT:-1}"                              # number of simulator instances
 TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-300}"        # helm/kubectl wait budget (seconds)
 API="${API:-2025-07-01-preview}"
 
@@ -33,7 +33,7 @@ log "  ADR_NAMESPACE_NAME= $ADR_NAMESPACE_NAME"
 log "  NAMESPACE         = $NAMESPACE"
 log "  COUNT             = $COUNT"
 log "  HELM_CHART_PATH   = ${HELM_CHART_PATH:-<unset>}"
-log "  HELM_CHART_URL    = ${HELM_CHART_URL:-<unset>}"
+log "  CHART_PATH_IN_REPO   = $CHART_PATH_IN_REPO"
 log "  TIMEOUT_SECONDS   = $TIMEOUT_SECONDS"
 
 # -------- tools --------
@@ -98,27 +98,19 @@ else
   warn "For Arc clusters, you can use: az connectedk8s proxy -g \"$RESOURCE_GROUP\" -n <arc-cluster>  (then point kubectl to the proxy kubeconfig)"
 fi
 
-# -------- Confirm kubectl connectivity --------
-if ! kubectl version >/dev/null 2>&1; then
-  err "kubectl is not connected to a cluster. Configure your kube context, then re-run."
-  exit 1
-fi
-ok "kubectl is connected"
-
-# -------- Helm deploy (umati) --------
-CHART_SRC=""
-if [[ -n "$HELM_CHART_URL" ]]; then
-  CHART_SRC="$HELM_CHART_URL"
-  log "Using chart from URL: $CHART_SRC"
-else
+# -------- determine chart source (GitHub raw by default) --------
+if [[ -n "$HELM_CHART_PATH" ]]; then
+  [[ -f "$HELM_CHART_PATH" ]] || { err "Local chart not found at $HELM_CHART_PATH"; exit 1; }
   CHART_SRC="$HELM_CHART_PATH"
-  [[ -f "$CHART_SRC" ]] || { err "Chart not found at $CHART_SRC"; exit 1; }
   log "Using local chart: $CHART_SRC"
+else
+  CHART_SRC="https://raw.githubusercontent.com/${GITHUB_ORG}/${GITHUB_REPO}/${GITHUB_BRANCH}/${CHART_PATH_IN_REPO}"
+  log "Using chart from GitHub: $CHART_SRC"
 fi
 
+# -------- helm deploy --------
 log "Deploying Helm release '$DEPLOYMENT_NAME' to namespace '$NAMESPACE'…"
 log "  simulations = $COUNT"
-# --create-namespace in case NAMESPACE does not exist yet
 helm upgrade -i "$DEPLOYMENT_NAME" "$CHART_SRC" \
   --namespace "$NAMESPACE" --create-namespace \
   --set "simulations=$COUNT" \
