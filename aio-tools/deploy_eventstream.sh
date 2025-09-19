@@ -2,13 +2,13 @@
 set -euo pipefail
 
 # -------- Config & required inputs -------- 
-: "${WORKSPACE_ID:?Set WORKSPACE_ID (GUID)}"
+: "${FABRIC_WORKSPACE_ID:?Set FABRIC_WORKSPACE_ID (GUID)}"
 
 # ---- Names (centralized) ----
-DISPLAY_NAME="${DISPLAY_NAME:-DTB GP Test}"
+DISPLAY_NAME="${DISPLAY_NAME:-DTB-GP-Test}"
 SOURCE_NAME="${SOURCE_NAME:-DataflowSource}"
-DEST_NAME="${DEST_NAME:-dtbSink}"
-STREAM_NAME="${STREAM_NAME:-staging-stream}"
+DEST_NAME="${DEST_NAME:-DTBSink}"
+STREAM_NAME="${STREAM_NAME:-Staging}"
 DESCRIPTION="${DESCRIPTION:-Dataflow staging pipeline for DTB GP Test}"
 
 # -------- logging (stderr only) --------
@@ -27,7 +27,7 @@ log "Getting Fabric access token…"
 AUTH_TOKEN="$(az account get-access-token \
   --scope https://api.fabric.microsoft.com/.default \
   --query accessToken -o tsv 2>/dev/null || true)"
-if [[ -z "$TOK" ]]; then
+if [[ -z "$AUTH_TOKEN" ]]; then
   echo "ERROR: Failed to obtain Fabric access token (check az login / tenant access)." >&2
   exit 1
 fi
@@ -49,8 +49,7 @@ EVENTSTREAM_JSON=$(
       name: $dest,
       type: "CustomEndpoint",
       properties: {},
-      inputNodes: [ { name: $stream } ],
-      ]
+      inputNodes: [ { name: $stream } ]      
     }
   ],
   streams: [
