@@ -146,6 +146,6 @@ az rest --method put \
   --url "$PUT_URL" \
   --body "$BODY" \
   --only-show-errors \
-  | jq -C . >/dev/stderr
+  | jq -C . >&2
 
 ok "Asset '$ASSET_NAME' onboarded."
