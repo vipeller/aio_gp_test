@@ -7,9 +7,9 @@ GITHUB_BRANCH="main"
 
 # -------- logging (stderr only) --------
 log()  { printf '[%s] [INFO] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
-ok()   { printf '[%s] [SUCC] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
+ok()   { printf '[%s] [ OK ] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
 warn() { printf '[%s] [WARN]  %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
-err()  { printf '[%s] [ERR] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
+err()  { printf '[%s] [ERR ] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
 
 # -------- required inputs (ENV) --------
 : "${DEPLOYMENT_NAME:?set DEPLOYMENT_NAME}"      # Helm release name

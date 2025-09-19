@@ -3,9 +3,9 @@ set -euo pipefail
 
 # -------- logging helpers (stderr only) --------
 log()  { printf '[%s] [INFO] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
-ok()   { printf '[%s] [SUCC] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
+ok()   { printf '[%s] [ OK ] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
 warn() { printf '[%s] [WARN]  %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
-err()  { printf '[%s] [ERR] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
+err()  { printf '[%s] [ERR ] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
 
 # -------- inputs --------
 : "${SUBSCRIPTION_ID:?set SUBSCRIPTION_ID}"
