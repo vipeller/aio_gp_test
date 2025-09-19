@@ -5,6 +5,7 @@ REPO_URL="https://raw.githubusercontent.com/vipeller/aio_gp_test/main/aio-tools"
 
 SCRIPTS=(
   discover_env.sh
+  deploy_opc_publisher_template.sh
 )
 
 echo "Fetching scripts from $REPO_URL …"
