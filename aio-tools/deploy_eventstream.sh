@@ -102,13 +102,13 @@ BODY=$(
 ok "Definition built."
 
 # -------- Create the Eventstream -------- 
-CREATE_URL="https://api.fabric.microsoft.com/v1/workspaces/$WORKSPACE_ID/items"
+CREATE_URL="https://api.fabric.microsoft.com/v1/workspaces/$FABRIC_WORKSPACE_ID/items"
 
 tmpdir="$(mktemp -d)"; trap 'rm -rf "$tmpdir"' EXIT
 headers="$tmpdir/headers.txt"
 resp="$tmpdir/body.json"
 
-log "Creating Eventstream in workspace: $WORKSPACE_ID"
+log "Creating Eventstream in workspace: $FABRIC_WORKSPACE_ID"
 HTTP_CODE=$(
   curl -sS -D "$headers" -o "$resp" -w '%{http_code}' \
     -H "Authorization: Bearer $AUTH_TOKEN" \
@@ -154,7 +154,7 @@ ok "Created Eventstream: $eventstream_id"
 # -------- Resolve sourceId & print connection -------- 
 log "Fetching topology to resolve source id for \"$SOURCE_NAME\"…"
 TOPOLOGY="$(curl -sS -H "Authorization: Bearer $AUTH_TOKEN" \
-  "https://api.fabric.microsoft.com/v1/workspaces/$WORKSPACE_ID/eventstreams/$eventstream_id/topology")"
+  "https://api.fabric.microsoft.com/v1/workspaces/$FABRIC_WORKSPACE_ID/eventstreams/$eventstream_id/topology")"
 
 source_id="$(jq -r --arg n "$SOURCE_NAME" '.sources[]? | select(.name==$n) | .id' <<<"$TOPOLOGY")"
 if [[ -z "$source_id" || "$source_id" == "null" ]]; then
@@ -166,10 +166,26 @@ ok "Resolved source id: $source_id"
 
 log "Fetching source connection credentials…"
 CONN="$(curl -sS -H "Authorization: Bearer $AUTH_TOKEN" \
-  "https://api.fabric.microsoft.com/v1/workspaces/$WORKSPACE_ID/eventstreams/$eventstream_id/sources/$source_id/connection")"
+  "https://api.fabric.microsoft.com/v1/workspaces/$FABRIC_WORKSPACE_ID/eventstreams/$eventstream_id/sources/$source_id/connection")"
+
+# Save to ./creds/dtb_hub_cred.json (pretty-printed), creating the dir if needed
+OUT_DIR="./creds"
+OUT_FILE="$OUT_DIR/dtb_hub_cred.json"
+mkdir -p "$OUT_DIR"
+printf '%s\n' "$CONN" | jq . > "$OUT_FILE"
+chmod 600 "$OUT_FILE" 2>/dev/null || true
+
+ok "Credentials saved to: $OUT_FILE"
 
 echo
-echo "=== Source connection (name: $SOURCE_NAME | id: $source_id) ==="
-echo "$CONN" | jq .
 echo "================================================================"
-ok "Done."
+echo "⚠️  SECURITY WARNING"
+echo "The source connection credentials were written to:"
+echo "    $OUT_FILE"
+echo
+echo "Treat this file as a secret. Remove it as soon as your deployment"
+echo "has consumed the credentials (e.g., after you’ve configured the sender)."
+echo "Example cleanup:"
+echo "    rm -f \"$OUT_FILE\""
+echo "================================================================"
+
