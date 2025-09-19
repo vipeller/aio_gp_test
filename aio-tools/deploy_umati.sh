@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+GITHUB_ORG="vipeller"
+GITHUB_REPO="aio_gp_test"
+GITHUB_BRANCH="main"
+
 # -------- logging (stderr only) --------
 log()  { printf '[%s] [INFO] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
 ok()   { printf '[%s] [SUCC] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }

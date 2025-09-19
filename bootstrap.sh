@@ -16,6 +16,7 @@ SCRIPTS=(
   "deploy_opc_publisher_instance.sh"
   "deploy_opc_publisher_discovery_handler.sh"
   "deploy_umati.sh"
+  "onboard_fullmachine.sh"
 )
 
 SCHEMA_FILES=(
