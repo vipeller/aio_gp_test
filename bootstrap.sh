@@ -15,6 +15,7 @@ SCRIPTS=(
   "deploy_opc_publisher_template.sh"
   "deploy_opc_publisher_instance.sh"
   "deploy_opc_publisher_discovery_handler.sh"
+  "deploy_umati"
 )
 
 SCHEMA_FILES=(
@@ -81,4 +82,4 @@ fi
 log "Done. Next:"
 log "  cd \"$TARGET_DIR\""
 log "  # discover env (prints exports) → eval them in your shell"
-log "  # eval \"\$(./discover_env.sh <resource-group> <subscription-id>)\""
+log "  # eval \"\$(./discover_env.sh <subscription-id> <resource-group>)\""
