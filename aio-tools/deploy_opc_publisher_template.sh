@@ -25,6 +25,17 @@ IMAGE_PULL_POLICY="Always"
 command -v az >/dev/null || { err "Azure CLI 'az' is required"; exit 1; }
 command -v jq >/dev/null || { err "'jq' is required"; exit 1; }
 
+# --- Ensure azure-iot-ops extension is installed (no prompts) ---
+az config set extension.use_dynamic_install=yes_without_prompt >/dev/null
+
+if ! az extension show -n azure-iot-ops >/dev/null 2>&1; then
+  echo "[setup] Installing Azure IoT Operations CLI extension…" >&2
+  az extension add -n azure-iot-ops --yes >/dev/null
+else
+  # optional: keep it fresh
+  az extension update -n azure-iot-ops --yes >/dev/null || true
+fi
+
 # -------- context summary --------
 log "Subscription:  $SUBSCRIPTION_ID"
 log "ResourceGroup: $RESOURCE_GROUP"
