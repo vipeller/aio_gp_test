@@ -14,6 +14,7 @@ SCRIPTS=(
   "discover_env.sh"
   "deploy_opc_publisher_template.sh"
   "deploy_opc_publisher_instance.sh"
+  "deploy_opc_publisher_discovery_handler.sh"
 )
 
 SCHEMA_FILES=(

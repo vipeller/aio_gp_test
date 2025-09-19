@@ -10,29 +10,27 @@ err()  { printf '[%s] [ERR] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
 # -------- inputs --------
 : "${SUBSCRIPTION_ID:?set SUBSCRIPTION_ID}"
 : "${RESOURCE_GROUP:?set RESOURCE_GROUP}"
-: "${INSTANCE_NAME:?set INSTANCE_NAME}"     # AIO instance name
-: "${TEMPLATE_NAME:?set TEMPLATE_NAME}"     # Akri Connector Template name
-: "${CONNECTOR_NAME:?set CONNECTOR_NAME}"   # Akri Connector (instance) name
-API="2025-07-01-preview"
+: "${INSTANCE_NAME:?set INSTANCE_NAME}"
+API="${API:-2025-07-01-preview}"
+DH_NAME="${DH_NAME:-opc-publisher}"     # discovery handler resource name
 
 log "Inputs:"
 log "  SUBSCRIPTION_ID = $SUBSCRIPTION_ID"
 log "  RESOURCE_GROUP  = $RESOURCE_GROUP"
 log "  INSTANCE_NAME   = $INSTANCE_NAME"
-log "  TEMPLATE_NAME   = $TEMPLATE_NAME"
-log "  CONNECTOR_NAME  = $CONNECTOR_NAME"
+log "  DH_NAME         = $DH_NAME"
+log "  API             = $API"
 
 # -------- tools & az extension --------
 command -v az >/dev/null || { err "Azure CLI 'az' is required"; exit 1; }
 command -v jq >/dev/null || { err "'jq' is required"; exit 1; }
 
-# ensure azure-iot-ops extension is present (no prompts)
+# No prompts for extensions
 az config set extension.use_dynamic_install=yes_without_prompt >/dev/null
 if ! az extension show -n azure-iot-ops >/dev/null 2>&1; then
   log "Installing Azure IoT Operations CLI extension…"
   az extension add -n azure-iot-ops >/dev/null
 else
-  # keep it fresh but don't fail the script if update errors
   az extension update -n azure-iot-ops >/dev/null || true
 fi
 ok "IoT Ops CLI extension ready"
@@ -46,31 +44,65 @@ fi
 az account set --subscription "$SUBSCRIPTION_ID"
 ok "Using subscription $SUBSCRIPTION_ID"
 
-# -------- discover extendedLocation from AIO --------
+# -------- resolve Custom Location from AIO instance --------
 log "Resolving extendedLocation from AIO instance '$INSTANCE_NAME'…"
-EXT_JSON="$(az iot ops show -g "$RESOURCE_GROUP" -n "$INSTANCE_NAME" -o json --only-show-errors)"
-EXT_NAME="$(jq -r '.extendedLocation.name // empty' <<<"$EXT_JSON")"
-if [[ -z "$EXT_NAME" ]]; then
-  err "Could not resolve extendedLocation from instance '$INSTANCE_NAME'."
+EXT_NAME="$(az iot ops show -g "$RESOURCE_GROUP" -n "$INSTANCE_NAME" \
+  -o tsv --query extendedLocation.name --only-show-errors || true)"
+if [[ -z "$EXT_NAME" || "$EXT_NAME" == "null" ]]; then
+  err "Could not resolve extendedLocation.name from AIO instance."
   exit 1
 fi
 ok "extendedLocation.name = $EXT_NAME"
 
-# -------- build request --------
+# -------- build ARM URI & body --------
 BASE="https://management.azure.com/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.IoTOperations/instances/$INSTANCE_NAME"
-URI="$BASE/akriConnectorTemplates/$TEMPLATE_NAME/connectors/$CONNECTOR_NAME?api-version=$API"
-BODY="$(jq -n --arg n "$EXT_NAME" '{extendedLocation:{name:$n,type:"CustomLocation"}}')"
+URI="$BASE/akriDiscoveryHandlers/$DH_NAME?api-version=$API"
 
-# -------- create or update connector --------
-log "Creating/updating Akri Connector instance '$CONNECTOR_NAME' from template '$TEMPLATE_NAME'…"
+log "Composing discovery handler payload…"
+BODY="$(jq -n --arg ext "$EXT_NAME" '
+{
+  extendedLocation: { name: $ext, type: "CustomLocation" },
+  properties: {
+    aioMetadata: { aioMinVersion: "1.2.*", aioMaxVersion: "1.*.*" },
+    imageConfiguration: {
+      imageName: "iotedge/opc-publisher",
+      imagePullPolicy: "Always",
+      registrySettings: {
+        registrySettingsType: "ContainerRegistry",
+        containerRegistrySettings: { registry: "mcr.microsoft.com" }
+      },
+      tagDigestSettings: { tagDigestType: "Tag", tag: "2.9.15" }
+    },
+    mode: "Enabled",
+    schedule: { scheduleType: "Cron", cron: "*/10 * * * *" },
+    additionalConfiguration: {
+      AioNetworkDiscoveryMode: "Fast",
+      EnableMetrics: "True",
+      LogFormat: "syslog"
+    },
+    discoverableDeviceEndpointTypes: [
+      { endpointType: "Microsoft.OpcPublisher", version: "2.9" }
+    ],
+    secrets: [],
+    diagnostics: { logs: { level: "info" } },
+    mqttConnectionConfiguration: {
+      host: "aio-broker:18883",
+      authentication: { method: "ServiceAccountToken", serviceAccountTokenSettings: { audience: "aio-internal" } },
+      tls: { mode: "Enabled", trustedCaCertificateConfigMapRef: "azure-iot-operations-aio-ca-trust-bundle" }
+    }
+  }
+}
+')"
+
+# -------- create or update & poll provisioning --------
+log "Deploying discovery handler '$DH_NAME'…"
 az rest --method put --url "$URI" --body "$BODY" --only-show-errors >/dev/null
 ok "PUT accepted by ARM"
 
-# -------- poll provisioning state --------
-log "Waiting for provisioning to complete…"
+log "Waiting for discovery handler provisioning…"
 for i in {1..60}; do
   state="$(az rest --method get --url "$URI" --only-show-errors \
-           | jq -r '.properties.provisioningState // .properties.status // empty')"
+           | jq -r '.properties.provisioningState // empty')"
 
   if [[ "$state" == "Succeeded" ]]; then
     ok "Provisioning Succeeded"
@@ -78,7 +110,6 @@ for i in {1..60}; do
   fi
   if [[ "$state" == "Failed" || "$state" == "Canceled" ]]; then
     err "Provisioning $state"
-    # dump current resource for troubleshooting (to stderr)
     az rest --method get --url "$URI" --only-show-errors | jq . >&2 || true
     exit 1
   fi
