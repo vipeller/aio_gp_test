@@ -12,13 +12,14 @@ err()  { printf '[%s] [ERR] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
 : "${INSTANCE_NAME:?set INSTANCE_NAME}"          # AIO instance name (for sanity checks)
 : "${RESOURCE_GROUP:?set RESOURCE_GROUP}"
 : "${SUBSCRIPTION_ID:?set SUBSCRIPTION_ID}"
-: "${ADR_NAMESPACE_NAME:?set ADR_NAMESPACE_NAME}"# ADR namespace (Microsoft.DeviceRegistry/namespaces)
-: "${NAMESPACE:?set NAMESPACE}"                  # Kubernetes namespace to deploy into
+: "${ADR_NAMESPACE_NAME:?set ADR_NAMESPACE_NAME}" 
+: "${NAMESPACE:?set NAMESPACE}"                   # Kubernetes namespace to deploy into
 
 # -------- optional inputs (ENV) --------
 COUNT="${COUNT:-1}"                              # number of simulator instances
-# Use your packaged chart by default:
+# Use packaged chart by default:
 HELM_CHART_PATH="${HELM_CHART_PATH:-./aio-tools/charts/umati-sample-server-1.0-alpha.1.tgz}"
+
 # Alternatively, support a direct URL if provided:
 HELM_CHART_URL="${HELM_CHART_URL:-}"
 TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-300}"        # helm/kubectl wait budget (seconds)
