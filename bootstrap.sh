@@ -15,7 +15,7 @@ SCRIPTS=(
   "deploy_opc_publisher_template.sh"
   "deploy_opc_publisher_instance.sh"
   "deploy_opc_publisher_discovery_handler.sh"
-  "deploy_umati"
+  "deploy_umati.sh"
 )
 
 SCHEMA_FILES=(
