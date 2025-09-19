@@ -57,6 +57,44 @@ SR_COUNT="$(jq -r '.value | length' <<<"$SR_LIST")"
 SCHEMA_REGISTRY_NAME="$(jq -r '.value | sort_by(.systemData.createdAt // "1970-01-01T00:00:00Z") | last | .name' <<<"$SR_LIST")"
 echo "[OK] Found Schema Registry: $SCHEMA_REGISTRY_NAME" >&2
 
+# --- Fabric 'My workspace' discovery ---
+echo "[INFO] Getting Fabric access token…" >&2
+TOK="$(az account get-access-token \
+  --scope https://api.fabric.microsoft.com/.default \
+  --query accessToken -o tsv 2>/dev/null || true)"
+if [[ -z "$TOK" ]]; then
+  echo "ERROR: Failed to obtain Fabric access token (check az login / tenant access)." >&2
+  exit 1
+fi
+
+echo "[INFO] Querying Fabric workspaces (tenant-scoped)..." >&2
+FABRIC_WS_JSON="$(curl -sSsf \
+  -H "Authorization: Bearer $TOK" \
+  -H "Content-Type: application/json" \
+  "https://api.fabric.microsoft.com/v1/workspaces")"
+
+# Prefer type == Personal; also fallback to displayName == 'My workspace' (case-insensitive)
+FABRIC_WORKSPACE_ID="$(
+  jq -r '
+    .value
+    | map(select(.type=="Personal" or ((.displayName // "") | ascii_downcase)=="my workspace"))
+    | .[0].id // empty
+  ' <<<"$FABRIC_WS_JSON"
+)"
+FABRIC_CAPACITY_ID="$(
+  jq -r '
+    .value
+    | map(select(.type=="Personal" or ((.displayName // "") | ascii_downcase)=="my workspace"))
+    | .[0].capacityId // empty
+  ' <<<"$FABRIC_WS_JSON"
+)"
+
+if [[ -z "$FABRIC_WORKSPACE_ID" ]]; then
+  echo "WARN: Could not find a Fabric 'My workspace' in this tenant for the current principal." >&2
+else
+  echo "[OK] Found Fabric 'My workspace': id=$FABRIC_WORKSPACE_ID capacityId=${FABRIC_CAPACITY_ID:-<none>}" >&2
+fi
+
 # --- Print env exports ---
 TEMPLATE_NAME="${TEMPLATE_NAME:-opc-publisher-gp}"
 CONNECTOR_NAME="${CONNECTOR_NAME:-opc-publisher-gp}"
@@ -77,4 +115,7 @@ export LOCATION="$LOCATION"
 export DEPLOYMENT_NAME="$DEPLOYMENT_NAME"
 export ADR_NAMESPACE_NAME="$ADR_NAMESPACE_NAME"
 export NAMESPACE="$NAMESPACE"
+
+export FABRIC_WORKSPACE_ID="$FABRIC_WORKSPACE_ID"
+export FABRIC_CAPACITY_ID="${FABRIC_CAPACITY_ID:-}"
 EOF
