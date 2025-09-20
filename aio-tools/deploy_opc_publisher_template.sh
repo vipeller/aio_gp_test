@@ -107,7 +107,7 @@ get_or_create_schema() {
           --registry "$SCHEMA_REGISTRY_NAME" \
           --name "$name" \
           --display-name "$disp" \
-          --version-content @"$schema_path" \
+          --version-content "$schema_path" \
           --version 1 \
           --desc "$desc" \
           --version-desc "$disp (v1)" \
