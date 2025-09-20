@@ -91,7 +91,7 @@ export COUNT=1
 
 This script waits for a discovered asset with prefix `fullmachinetool-` and onboards it into ADR.
 
-### 7) Deploy the **Eventstream**
+### 7) Deploy **Eventstream**
 
 ```bash
 # Optional: change the display name (default: DTB-GP-Test)

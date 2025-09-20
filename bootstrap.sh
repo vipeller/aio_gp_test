@@ -18,6 +18,7 @@ SCRIPTS=(
   "deploy_umati.sh"
   "onboard_fullmachine.sh"
   "deploy_eventstream.sh"
+  "deploy_dataflow.sh"
 )
 
 SCHEMA_FILES=(
