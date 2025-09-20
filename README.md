@@ -78,8 +78,6 @@ This enables scheduled discovery so **discovered assets/devices** appear in ADR.
 ### 5) Deploy the **UMATI simulator**
 
 ```bash
-# You can change COUNT to spin up multiple simulators
-export COUNT=1
 ./deploy_umati.sh
 ```
 
@@ -95,7 +93,7 @@ This script waits for a discovered asset with prefix `fullmachinetool-` and onbo
 
 ```bash
 # Optional: change the display name (default: DTB-GP-Test)
-export DISPLAY_NAME="DTB-GP-Custom"
+# export DISPLAY_NAME="DTB-GP-Custom"
 
 ./deploy_eventstream.sh
 ```

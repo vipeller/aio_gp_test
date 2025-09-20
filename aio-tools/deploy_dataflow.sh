@@ -17,7 +17,7 @@ MQTT_ENDPOINT_NAME="${MQTT_ENDPOINT_NAME:-default}"            # built-in MQTT e
 KAFKA_ENDPOINT_NAME="${KAFKA_ENDPOINT_NAME:-fabric-es-kafka}"  # we’ll ensure/create this
 
 # MQTT source topic (override if needed)
-SOURCE_TOPIC="${SOURCE_TOPIC:-fullmachine/telemetry}"
+SOURCE_TOPIC="${SOURCE_TOPIC:-azure-iot-operations/umati-000000/messages/FullMachineTool}"
 
 # -------- logging (stderr only) --------
 log()  { printf '[%s] [INFO] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
