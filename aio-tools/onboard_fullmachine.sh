@@ -33,12 +33,16 @@ log "  TIMEOUT/INTERVAL  = ${WAIT_TIMEOUT_SEC}s / ${WAIT_INTERVAL_SEC}s"
 command -v az >/dev/null  || { err "Azure CLI 'az' is required"; exit 1; }
 command -v jq >/dev/null  || { err "'jq' is required"; exit 1; }
 
-# Ensure the azure-iot-ops extension (az iot ops …) exists
+# ensure azure-iot-ops extension is present (no prompts)
+az config set extension.use_dynamic_install=yes_without_prompt >/dev/null
 if ! az extension show -n azure-iot-ops >/dev/null 2>&1; then
-  log "Installing Azure IoT Operations CLI extension (azure-iot-ops)…"
-  az extension add -n azure-iot-ops --upgrade --only-show-errors >/dev/null
-  ok "Extension installed"
+  log "Installing Azure IoT Operations CLI extension…"
+  az extension add -n azure-iot-ops -y --only-show-errors >/dev/null
+else
+  # keep it fresh but don't fail the script if update errors
+  az extension update -n azure-iot-ops --only-show-errors >/dev/null || true
 fi
+ok "IoT Ops CLI extension ready"
 
 # -------- login & subscription --------
 if ! az account show >/dev/null 2>&1; then

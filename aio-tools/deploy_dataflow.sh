@@ -34,13 +34,14 @@ az account show >/dev/null 2>&1 || az login --only-show-errors >/dev/null
 az account set --subscription "$SUBSCRIPTION_ID"
 
 # -------- Ensure 'azure-iot-ops' CLI extension is installed --------
+az config set extension.use_dynamic_install=yes_without_prompt >/dev/null
 if ! az extension show -n azure-iot-ops >/dev/null 2>&1; then
-  log "Installing Azure CLI extension 'azure-iot-ops'…"
+  log "Installing Azure IoT Operations CLI extension…"
   az extension add -n azure-iot-ops -y --only-show-errors >/dev/null
-  ok "'azure-iot-ops' extension installed."
-else
-  ok "'azure-iot-ops' extension present."
+else  
+  az extension update -n azure-iot-ops --only-show-errors >/dev/null || true
 fi
+ok "IoT Ops CLI extension ready"
 
 # -------- Optional: try to auto-connect to AKS --------
 # If there's exactly one AKS cluster in the RG, attempt to get credentials.

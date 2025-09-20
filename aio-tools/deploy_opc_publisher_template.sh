@@ -30,10 +30,9 @@ az config set extension.use_dynamic_install=yes_without_prompt >/dev/null
 
 if ! az extension show -n azure-iot-ops >/dev/null 2>&1; then
   echo "[setup] Installing Azure IoT Operations CLI extension…" >&2
-  az extension add -n azure-iot-ops >/dev/null
+  az extension add -n azure-iot-ops -y --only-show-errors >/dev/null
 else
-  # optional: keep it fresh
-  az extension update -n azure-iot-ops >/dev/null || true
+  az extension update -n azure-iot-ops --only-show-errors >/dev/null || true
 fi
 
 # -------- context summary --------
