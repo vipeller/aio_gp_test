@@ -81,6 +81,8 @@ This enables scheduled discovery so **discovered assets/devices** appear in ADR.
 ./deploy_umati.sh
 ```
 
+Spins up the UMATI sample server in your cluster.
+
 ### 6) Onboard one **discovered UMATI asset**
 
 ```bash
@@ -98,9 +100,17 @@ This script waits for a discovered asset with prefix `fullmachinetool-` and onbo
 ./deploy_eventstream.sh
 ```
 
-This creates an Eventstream.
-The script also fetches the source connection credentials and saves them to `./creds/dtb_hub_cred.json` — **treat this file as a secret and delete it after your deployment is configured.**
+This creates an Eventstream. The script also fetches the source connection credentials and saves them to ./creds/dtb_hub_cred.json — **treat this file as a secret and delete it after your deployment is configured.**
 
+### 8) Deploy **Dataflow** (MQ ➜ Eventstream)
+
+```bash
+./deploy_dataflow.sh
+```
+
+Wires local MQTT to your Eventstream via a Dataflow.
+
+**Heads-up:** Run `./deploy_eventstream.sh` first so `./creds/dtb_hub_cred.json` exists. That file contains secrets—treat it carefully and delete it after configuration.
 
 ---
 
