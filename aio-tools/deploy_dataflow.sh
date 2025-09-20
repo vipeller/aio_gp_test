@@ -19,11 +19,11 @@ KAFKA_ENDPOINT_NAME="${KAFKA_ENDPOINT_NAME:-fabric-es-kafka}"  # we’ll ensure/
 # MQTT source topic (override if needed)
 SOURCE_TOPIC="${SOURCE_TOPIC:-fullmachine/telemetry}"
 
-# -------- Logging helpers --------
-log(){ printf '[INFO] %s\n' "$*" >&2; }
-ok(){  printf '[OK]   %s\n' "$*" >&2; }
-warn(){printf '[WARN] %s\n' "$*" >&2; }
-err(){ printf '[ERR]  %s\n' "$*" >&2; }
+# -------- logging (stderr only) --------
+log()  { printf '[%s] [INFO] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
+ok()   { printf '[%s] [ OK ] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
+warn() { printf '[%s] [WARN]  %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
+err()  { printf '[%s] [ERR ] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
 
 command -v az >/dev/null || { err "Azure CLI not found"; exit 1; }
 command -v jq >/dev/null || { err "jq not found"; exit 1; }
@@ -42,68 +42,27 @@ else
   ok "'azure-iot-ops' extension present."
 fi
 
-# -------- Resolve extendedLocation & host cluster info --------
-log "Getting AIO instance and its Custom Location…"
-AIO_JSON="$(az iot ops show -g "$RESOURCE_GROUP" -n "$INSTANCE_NAME" -o json --only-show-errors)"
-EXT_NAME="$(jq -r '.extendedLocation.name // empty' <<<"$AIO_JSON")"
-[[ -z "$EXT_NAME" || "$EXT_NAME" == "null" ]] && { err "Instance has no extendedLocation.name"; exit 1; }
-
-# The Custom Location resource lives in the same RG as the AIO instance
-CL_ID="/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.ExtendedLocation/customLocations/${EXT_NAME}"
-CL_JSON="$(az rest --method get --url "https://management.azure.com${CL_ID}?api-version=2021-08-31" --only-show-errors)"
-HOST_ID="$(jq -r '.properties.hostResourceId // empty' <<<"$CL_JSON")"
-if [[ -z "$HOST_ID" ]]; then
-  warn "Could not determine hostResourceId from Custom Location. Kubernetes connectivity check may be limited."
-fi
-
-# -------- Ensure kubectl can talk to the target cluster --------
-need_k8s=0
-if ! kubectl get ns azure-iot-operations >/dev/null 2>&1; then
-  need_k8s=1
-fi
-
-if [[ "$need_k8s" -eq 1 ]]; then
-  log "kubectl is not connected to the target cluster. Attempting to connect…"
-
-  if [[ -n "$HOST_ID" && "$HOST_ID" == */managedClusters/* ]]; then
-    # AKS cluster
-    AKS_RG="$(sed -E 's#.*/resourceGroups/([^/]+).*#\1#' <<<"$HOST_ID")"
-    AKS_NAME="$(sed -E 's#.*/managedClusters/([^/]+).*#\1#' <<<"$HOST_ID")"
-    if [[ -n "$AKS_RG" && -n "$AKS_NAME" ]]; then
-      log "Detected AKS host: $AKS_NAME (RG: $AKS_RG). Fetching credentials…"
-      az aks get-credentials -g "$AKS_RG" -n "$AKS_NAME" --overwrite-existing --only-show-errors >/dev/null
-      ok "kubectl configured for AKS."
-    else
-      err "Could not parse AKS name/RG from hostResourceId: $HOST_ID"
-      exit 1
-    fi
-  elif [[ -n "$HOST_ID" && "$HOST_ID" == */connectedClusters/* ]]; then
-    # Arc-enabled Kubernetes (on-prem/edge).
-    ARC_RG="$(sed -E 's#.*/resourceGroups/([^/]+).*#\1#' <<<"$HOST_ID")"
-    ARC_NAME="$(sed -E 's#.*/connectedClusters/([^/]+).*#\1#' <<<"$HOST_ID")"
-    warn "Detected Arc-enabled Kubernetes host: $ARC_NAME (RG: $ARC_RG)."
-    warn "This script cannot auto-launch the interactive 'az connectedk8s proxy'."
-    cat >&2 <<EOT
-Next steps:
-  1) In a separate terminal, run:
-     az connectedk8s proxy -g "$ARC_RG" -n "$ARC_NAME" --context "$ARC_NAME"
-
-  2) Ensure 'kubectl get ns' succeeds against that context, then re-run this script.
-
-EOT
-    exit 1
+# -------- Optional: try to auto-connect to AKS --------
+# If there's exactly one AKS cluster in the RG, attempt to get credentials.
+# Otherwise, tell the user how to connect.
+log "Checking for AKS clusters in resource group '$RESOURCE_GROUP'…"
+AKS_LIST="$(az aks list -g "$RESOURCE_GROUP" -o json 2>/dev/null || echo '[]')"
+AKS_COUNT="$(jq 'length' <<<"$AKS_LIST")"
+if [[ "$AKS_COUNT" -eq 1 ]]; then
+  AKS_NAME="$(jq -r '.[0].name' <<<"$AKS_LIST")"
+  log "Found single AKS cluster: $AKS_NAME — fetching credentials…"
+  # --overwrite-existing avoids prompt if kubeconfig already has an entry
+  if az aks get-credentials -g "$RESOURCE_GROUP" -n "$AKS_NAME" --overwrite-existing >/dev/null 2>&1; then
+    ok "kubectl context configured for AKS cluster '$AKS_NAME'"
   else
-    err "Unknown host cluster type (hostResourceId: $HOST_ID). Configure kubectl to the target cluster and retry."
-    exit 1
+    warn "Failed to get AKS credentials automatically. Please configure kubectl context manually."
   fi
-
-  # Re-check after attempting to connect
-  if ! kubectl get ns azure-iot-operations >/dev/null 2>&1; then
-    err "kubectl still cannot reach namespace 'azure-iot-operations'. Fix connectivity and retry."
-    exit 1
-  fi
+elif [[ "$AKS_COUNT" -gt 1 ]]; then
+  warn "Multiple AKS clusters found in RG '$RESOURCE_GROUP'."
+  warn "Run: az aks get-credentials -g \"$RESOURCE_GROUP\" -n <cluster-name>"
 else
-  ok "kubectl connectivity OK (namespace 'azure-iot-operations' reachable)."
+  warn "No AKS clusters found in RG '$RESOURCE_GROUP'. If you're using Arc-enabled K8s, ensure your kubectl context is already set."
+  warn "For Arc clusters, you can use: az connectedk8s proxy -g \"$RESOURCE_GROUP\" -n <arc-cluster>  (then point kubectl to the proxy kubeconfig)"
 fi
 
 # -------- Parse Fabric creds to get EH namespace & event hub name --------
@@ -156,7 +115,7 @@ az iot ops dataflow endpoint apply \
   --instance "$INSTANCE_NAME" \
   --name "$KAFKA_ENDPOINT_NAME" \
   --config-file "$EP_CFG" \
-  --only-show-errors >/dev/null
+  --only-show-errors
 ok "Kafka endpoint ensured."
 
 # -------- Build the Dataflow (mode + operations: Source → Destination) --------
@@ -190,10 +149,12 @@ JSON
 
 log "Applying dataflow '$DATAFLOW_NAME' (source mqtt:'$SOURCE_TOPIC' → kafka:'$DEST_TOPIC')…"
 az iot ops dataflow apply \
-  --resource-group "$RESOURCE_GROUP" \
+  -g "$RESOURCE_GROUP" \
   --instance "$INSTANCE_NAME" \
+  -n "$DATAFLOW_NAME" \
+  -p "$PROFILE_NAME" \
   --config-file "$DF_CFG" \
-  --only-show-errors >/dev/null
+  --only-show-errors
 
 ok "Dataflow applied."
 echo "Profile:    $PROFILE_NAME"
