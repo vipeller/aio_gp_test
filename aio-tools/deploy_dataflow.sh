@@ -122,8 +122,6 @@ ok "Kafka endpoint ensured."
 DF_CFG="$tmpdir/dataflow.json"
 cat >"$DF_CFG" <<JSON
 {
-  "profileName": "$PROFILE_NAME",
-  "dataflowName": "$DATAFLOW_NAME",
   "mode": "Enabled",
   "operations": [
     {
