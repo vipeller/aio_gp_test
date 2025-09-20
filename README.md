@@ -113,49 +113,73 @@ Wires local MQTT to your Eventstream via a Dataflow.
 **Heads-up:** Run `./deploy_eventstream.sh` first so `./creds/dtb_hub_cred.json` exists. That file contains secrets—treat it carefully and delete it after configuration.
 
 ---
-
 # Azure IoT Operations – UMATI Machine Tool Simulation Layer
 
-This repo adds a **simulation + ingestion layer** on top of an existing \[Azure IoT Operations (AIO)] deployment:
+This repo adds a **simulation + ingestion layer** on top of an existing [Azure IoT Operations (AIO)][AIO] deployment:
 
-* **UMATI MachineTool simulator** (via Helm) → provides a realistic OPC UA MachineTool model (from the [UMATI Sample Server]).
-* **Microsoft OPC Publisher** as an **Akri connector** → subscribes to the simulator and publishes *OPC UA data points/events* into AIO (via the built-in MQTT broker).
-* Optional **Discovery Handler** → auto-discovers OPC UA endpoints and produces *discovered assets/devices* in Azure Device Registry (ADR); you can then onboard one with a script.
+* **UMATI MachineTool simulator** (Helm) → emits realistic OPC UA MachineTool data from the [UMATI Sample Server].
+* **[Microsoft OPC Publisher]** as an **[Akri connector]** → subscribes to the simulator and publishes OPC UA **variables/events** into AIO’s built-in **MQTT** broker.
+* *(Optional)* **Discovery Handler** → auto-discovers OPC UA endpoints and creates **discovered assets/devices** in ADR for you to onboard.
+* **[Eventstream]** (Fabric) → a streaming item with a **[Custom Endpoint]** source (we’ll push data into it) and a destination you choose.
+* **[AIO Dataflow]** → bridges AIO’s **MQTT** world to Fabric **Eventstream** (via a Kafka endpoint), moving simulator telemetry end-to-end.
 
-Result: you get **simulated MachineTool data points/events** (OPC UA “Variables” and Events from the MachineTool companion spec) flowing into AIO’s messaging layer (MQTT), perfect for end-to-end validation before connecting real equipment.
+**Result:** you get **simulated MachineTool OPC UA variables & events** flowing from the UMATI server → OPC Publisher (MQTT) → AIO Dataflow → Fabric Eventstream for downstream analytics or storage.
 
 [AIO]: https://learn.microsoft.com/azure/iot-operations/
 [UMATI Sample Server]: https://github.com/umati/Sample-Server
-[Microsoft OPC Publisher]: https://github.com/Azure/Industrial-IoT/tree/main
+[Microsoft OPC Publisher]: https://azure.github.io/Industrial-IoT/opc-publisher/
+[Akri connector]: https://learn.microsoft.com/en-us/azure/iot-operations/discover-manage-assets/overview-akri
+[Eventstream]: https://learn.microsoft.com/en-us/fabric/real-time-intelligence/event-streams/overview?tabs=enhancedcapabilities
+[Custom Endpoint]: https://learn.microsoft.com/en-us/fabric/real-time-intelligence/event-streams/add-source-custom-app?pivots=enhanced-capabilities
+[AIO Dataflow]: https://learn.microsoft.com/en-us/azure/iot-operations/connect-to-cloud/overview-dataflow
 
 ---
 
-## What gets deployed
+## What gets deployed (and why)
 
-* **UMATI simulator**: a Kubernetes Helm release in your cluster (typically namespace `azure-iot-operations`).
-* **OPC Publisher Akri Connector Template**: an AIO resource that defines how OPC Publisher runs (image, pull policy, schemas, etc.).
-* **OPC Publisher Akri Connector (instance)**: a running connector derived from the template (deploys workloads in your cluster via Custom Location).
-* **(Optional) Discovery Handler**: schedules endpoint discovery and produces **discovered assets/devices** in ADR.
-* **Onboarded Asset**: the script promotes a discovered UMATI asset (name prefix `fullmachinetool-`) to a managed ADR **asset**.
+* **UMATI Simulator (Helm release)**
+  Runs the UMATI OPC UA sample server(s) in your cluster (usually in `azure-iot-operations`). This is your **data source**.
+  **Plus:** matching **ADR device** (endpoint points at the service in your cluster, with MachineTool asset type).
 
+* **OPC Publisher – Akri Connector Template**
+  Defines *how* OPC Publisher runs (container image/pull policy, schema references, misc runtime config). Think of this as the **class**.
+
+* **OPC Publisher – Akri Connector (instance)**
+  A **running connector** derived from the template that binds to your AIO Custom Location. It subscribes to OPC UA nodes/events and **publishes to MQTT**.
+
+* **(Optional) Discovery Handler**
+  Periodically probes for OPC UA endpoints and creates **discovered assets/devices** in ADR so you can promote (“onboard”) them to managed assets.
+
+* **Onboarded Asset (ADR)**
+  The **managed asset** created from a discovered UMATI `fullmachinetool-*` asset; used to identify and configure the device/asset in ADR.
+
+* **Eventstream (Fabric)**
+  A Fabric **Eventstream** item with a **Custom Endpoint source**. The script prints and saves **source credentials** (connection string / namespace / hub).
+  These credentials are later used by the AIO side to send data **into** the Eventstream.
+
+* **Kafka Secret & Endpoint (AIO)**
+  A Kubernetes **Secret** (holds the Eventstream connection string) and an AIO **Kafka endpoint** pointing to the Eventstream’s namespace/hub. This is the **wire** the data will travel on.
+
+* **AIO Dataflow**
+  A Dataflow wiring **AIO MQ → the Kafka endpoint** above. This is the **bridge** into Eventstream.
+  
 ---
 
 ## Scripts in this repo
 
 * `bootstrap.sh`
-  Convenience downloader: fetches the scripts into `./aio-tools/` (handy in Cloud Shell).
+  Convenience downloader: pulls scripts + required schema files into `./aio-tools/` (great in Cloud Shell).
 
 * `discover_env.sh`
-  **Discovers** resource names in your RG and prints `export …` lines:
+  **Discovers** resource names in your Resource Group and prints `export …` lines for:
 
   * AIO **instance** name & **location**
   * ADR **namespace** name
   * **Schema Registry** name
-    Supports `discover_env.sh <resource-group> <subscription-id>` or env vars.
+    Also resolves **Fabric** “My workspace” + capacity if you have permissions.
 
 * `deploy_opc_publisher_template.sh`
-  Creates/updates an **Akri Connector Template** for Microsoft OPC Publisher.
-  Also **ensures required schemas** exist in your Schema Registry (creating them if missing) and binds them:
+  Creates/updates the **Akri Connector Template** for OPC Publisher and **ensures schemas exist** in your Schema Registry (creating them if missing):
 
   * `opc-publisher-endpoint-schema`
   * `opc-publisher-dataset-schema`
@@ -163,18 +187,26 @@ Result: you get **simulated MachineTool data points/events** (OPC UA “Variable
   * `opc-publisher-dataset-datapoint-schema`
 
 * `deploy_opc_publisher_instance.sh`
-  Instantiates a **Connector** from the template (i.e., a running Akri connector bound to your Custom Location), then polls until the provisioning state is `Succeeded`.
+  Instantiates a **Connector** from the template and waits for provisioning to **Succeeded**.
 
 * `deploy_opc_publisher_discovery_handler.sh` *(optional)*
-  Deploys a **Discovery Handler** for OPC Publisher (cron schedule). When enabled, AIO will create **discovered assets/devices** in ADR for matching OPC UA endpoints.
+  Deploys a Discovery Handler (cron) so AIO populates **discovered assets/devices** in ADR.
 
 * `deploy_umati.sh`
-  Deploys the **UMATI simulator** with Helm and waits for readiness.
+  Deploys the **UMATI simulator** Helm chart from GitHub, waits for readiness, **and creates the corresponding ADR device** (with OPC UA endpoint and MachineTool asset type) so downstream discovery/onboarding can work immediately.
 
 * `onboard_fullmachine.sh`
-  **Waits** for a *discovered asset* whose name starts with `fullmachinetool-`, then **onboards** it into ADR as a managed **asset** (copies properties, fixes unsupported fields, sets `extendedLocation`, etc.).
+  **Waits** for a discovered asset whose name starts with `fullmachinetool-` and **onboards** it into ADR as a managed asset.
+
+* `deploy_eventstream.sh`
+  Creates a **Fabric Eventstream** (default display name `DTB-GP-Test`, override via `DISPLAY_NAME`) and prints **source connection credentials**, saving them to `./creds/dtb_hub_cred.json`.
+  ⚠️ **Treat that file as a secret and delete it after use.**
+
+* `deploy_dataflow.sh`
+  Creates the **Kafka Secret/Endpoint** in AIO from the saved credentials and applies a **Dataflow** that sends data from AIO → **Eventstream** (no transformations).
 
 ---
+
 
 ## Notes & tips
 
