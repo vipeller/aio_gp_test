@@ -94,13 +94,19 @@ This script waits for a discovered asset with prefix `fullmachinetool-` and onbo
 ### 7) Deploy **Eventstream**
 
 ```bash
+# Optional: use a specific Fabric workspace instead of "My workspace"
+# export FABRIC_WORKSPACE_ID="<workspace-guid>"
+
 # Optional: change the display name (default: DTB-GP-Test)
 # export DISPLAY_NAME="DTB-GP-Custom"
 
 ./deploy_eventstream.sh
 ```
 
-This creates an Eventstream. The script also fetches the source connection credentials and saves them to ./creds/dtb_hub_cred.json — **treat this file as a secret and delete it after your deployment is configured.**
+Creates a Fabric Eventstream. Saves source credentials to `./creds/dtb_hub_cred.json`.
+
+⚠️ Treat that file as a secret and delete it once your deployment is configured.
+
 
 ### 8) Deploy **Dataflow** (MQ ➜ Eventstream)
 
@@ -158,7 +164,7 @@ This repo adds a **simulation + ingestion layer** on top of an existing [Azure I
   These credentials are later used by the AIO side to send data **into** the Eventstream.
 
 * **Kafka Secret & Endpoint (AIO)**
-  A Kubernetes **Secret** (holds the Eventstream connection string) and an AIO **Kafka endpoint** pointing to the Eventstream’s namespace/hub. This is the **wire** the data will travel on.
+  A Kubernetes **Secret** (holds the Eventstream connection string) and an AIO **Kafka endpoint** pointing to the Eventstream’s namespace/hub.
 
 * **AIO Dataflow**
   A Dataflow wiring **AIO MQ → the Kafka endpoint** above. This is the **bridge** into Eventstream.
