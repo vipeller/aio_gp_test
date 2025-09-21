@@ -182,7 +182,7 @@ This repo adds a **simulation + ingestion layer** on top of an existing [Azure I
   * AIO **instance** name & **location**
   * ADR **namespace** name
   * **Schema Registry** name
-    Also resolves **Fabric** “My workspace” + capacity if you have permissions.
+  * Also resolves **Fabric** “My workspace” + capacity if you have permissions.
 
 * `deploy_opc_publisher_template.sh`
   Creates/updates the **Akri Connector Template** for OPC Publisher and **ensures schemas exist** in your Schema Registry (creating them if missing):
@@ -206,6 +206,7 @@ This repo adds a **simulation + ingestion layer** on top of an existing [Azure I
 
 * `deploy_eventstream.sh`
   Creates a **Fabric Eventstream** (default display name `DTB-GP-Test`, override via `DISPLAY_NAME`) and prints **source connection credentials**, saving them to `./creds/dtb_hub_cred.json`.
+  
   ⚠️ **Treat that file as a secret and delete it after use.**
 
 * `deploy_dataflow.sh`
