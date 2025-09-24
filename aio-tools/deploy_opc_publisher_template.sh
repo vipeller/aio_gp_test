@@ -137,6 +137,22 @@ ok "add=$ADD_ID"
 ok "dataset=$DS_ID"
 ok "events=$EV_ID"
 
+SCHEMA_VER="${SCHEMA_VER:-1}"
+
+# map display names -> hyphenless names expected by the ref
+add_nohyphen="opcpublisherendpointschema"
+ds_nohyphen="opcpublisherdatasetschema"
+ev_nohyphen="opcpublishereventschema"
+
+ADD_ID="aio-sr://${SCHEMA_REGISTRY_NAME}/${add_nohyphen}:${SCHEMA_VER}"
+DS_ID="aio-sr://${SCHEMA_REGISTRY_NAME}/${ds_nohyphen}:${SCHEMA_VER}"
+EV_ID="aio-sr://${SCHEMA_REGISTRY_NAME}/${ev_nohyphen}:${SCHEMA_VER}"
+
+ok "Using AIO Schema Registry refs:"
+ok "  additionalConfigSchemaRef: $ADD_ID"
+ok "  defaultDatasetConfigSchemaRef: $DS_ID"
+ok "  defaultEventsConfigSchemaRef: $EV_ID"
+
 # -------- build connector template body --------
 log "Composing Akri Connector Template body…"
 BODY="$(jq -n \
