@@ -105,6 +105,7 @@ cat >"$EP_CFG" <<JSON
         "secretRef": "$SECRET_NAME"
       }
     },
+    "copyMqttProperties": "Enabled",
     "tls": { "mode": "Enabled" }
   }
 }
