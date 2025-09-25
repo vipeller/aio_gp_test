@@ -1,3 +1,5 @@
+### **under construction** : the [original deployment page is here](doc/INSTALL_DF_SCRIPTS.md)
+
 # Some good main title
 
 < some good description what this is about. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. >
@@ -20,6 +22,6 @@ This section should shortly explain that we will need ~3 phases of deployment. L
 
 Some description what it does and a link to the page that describes the steps
 
-### Creaging ADR Connector
+### Creating ADR Connector
 
 Some description what it does and a link to the page that describes the steps
