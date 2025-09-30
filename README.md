@@ -61,7 +61,7 @@ The simulation layer and dataflow can be set up in two ways:
 
 * **[Fast-track](doc/INSTALL_DF_SCRIPTS.md)** — Run a set of deployment scripts that install and wire up all components end-to-end. You’ll have MachineTool OPC UA variables & events flowing **UMATI → OPC Publisher (MQTT) → AIO Dataflow → Fabric Eventstream** with minimal interaction.
 
-* **[Manual setup](doc/INSTALL_FD_MANUAL.md)** — After deploying the UMATI server, complete each step in the Azure portal and the IoT Operations experience. This takes longer, but it’s great for learning how the system works and how to manage it through the UI.
+* **[Manual setup](doc/INSTALL_DF_MANUAL.md)** — After deploying the UMATI server, complete each step in the Azure portal and the IoT Operations experience. This takes longer, but it’s great for learning how the system works and how to manage it through the UI.
 
 ### Setting up event stream (Abhinav's stuff) 
 
