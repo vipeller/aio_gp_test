@@ -50,6 +50,7 @@ eval "$(./discover_env.sh <resource-group> <subscription-id>)"
 
 You can double-check the environment variables using `printenv`
 
-### 1) [Deploy the OPC Publisher Connector Template](./INSTALL_CONNECTOR_TEMPLATE.md)
-### 2) [Deploy the OPC Publisher Connector](./INSTALL_CONNECTOR.md)
-### 3) [Deploy the UMATI simulator](./INSTALL_UMATI.md)
+### 1) Deploy the OPC Publisher [Connector Template](./INSTALL_CONNECTOR_TEMPLATE.md)
+### 2) Deploy the OPC Publisher [Connector](./INSTALL_CONNECTOR.md)
+### 3) Deploy the [UMATI simulator](./INSTALL_UMATI.md)
+### 4) Onboard a discovered [UMATI asset](./ONBOARD_UMATI_ASSET.md)

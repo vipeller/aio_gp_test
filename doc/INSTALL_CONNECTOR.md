@@ -6,3 +6,4 @@ Once the **Connector Template** is in place, the next step is to create a **Conn
 ./deploy_opc_publisher_instance.sh
 ```
 
+[Back](INSTALL_DF_MANUAL.md)

@@ -16,3 +16,5 @@ The newly installed template should appear in the **Connector Templates** list:
 Selecting the installed **opc-publisher** template shows its configured parameters:
 
 ![Connector Template Config](./images/connector_template_config.png "Connector Template Config")
+
+[Back](INSTALL_DF_MANUAL.md)
