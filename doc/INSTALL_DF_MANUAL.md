@@ -54,3 +54,4 @@ You can double-check the environment variables using `printenv`
 ### 2) Deploy the OPC Publisher [Connector](./INSTALL_CONNECTOR.md)
 ### 3) Deploy the [UMATI simulator](./INSTALL_UMATI.md)
 ### 4) Onboard a discovered [UMATI asset](./ONBOARD_UMATI_ASSET.md)
+### 5) Create [Eventstream](./CREATE_EVENTSTREAM.md)
