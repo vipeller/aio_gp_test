@@ -5,7 +5,7 @@ The UMATI Machine Tool Simulator cannot currently be deployed directly through t
 Execute the following script:
 
 ```bash
-./deploy_umati.sh
+./aio-tools/deploy_umati.sh
 ```
 
 Once the script has run successfully:
