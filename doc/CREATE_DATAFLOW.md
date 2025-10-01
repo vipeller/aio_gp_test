@@ -1,27 +1,67 @@
 ### Create Dataflow
 
-Setting up dataflow requires endpoint credentials from an [Event Stream setup](./CREATE_EVENTSTREAM.md).
+Creating a **Dataflow** requires the **endpoint credentials** collected during the [Eventstream setup](./CREATE_EVENTSTREAM.md). These credentials establish the secure bridge between **Azure IoT Operations (AIO)** and **Fabric**.
 
-#### Create Fabric Endpoint
+---
 
-Using the **Azure Iot Operations experience** portal, navigate to **Data flow endpoints**, and press **new**:
+#### 1. Create Fabric Endpoint
 
-![Data flow endpoints](./images/fabric_endpoint.png "Data flow endpoints")
+1. In the **Azure IoT Operations Experience** portal, navigate to **Data flow endpoints** and click **New**:
 
-On the upcoming screen, copy the bootstrap server from the Fabric Credentials pane to the Host name. Also make sure that the Authentication method/SASL Type are aligned:
+   ![Data flow endpoints](./images/fabric_endpoint.png "Data flow endpoints")
 
-![Endpoint Host](./images/endpoint_bootstrap.png "Endpoint Host")
+2. On the setup screen, copy the **Bootstrap server** value from the Fabric Kafka credentials pane into the **Host name** field.
+   Ensure the **Authentication method** and **SASL type** match what is shown in Fabric:
 
-As a next step, the Username/Password needs to be set. To achieve this, we need to add these to a keystore. 
+   ![Endpoint Host](./images/endpoint_bootstrap.png "Endpoint Host")
 
-Add a reference to the username. Note, that the username value must be "$ConnectionString"
+---
 
-![Fabric Username](./images/username_reference.png "Fabric Username")
+#### 2. Configure Authentication
 
-Add a reference to the password. For this step, you need to copy the **Connection string-primary key** from the Kafka credentials pane:
+Authentication requires setting up **Username** and **Password** references in a **Keystore**:
 
-![Fabric Password](./images/username_reference.png "Fabric Password")
+* **Username**: Add a reference with the value set to **`$ConnectionString`**.
 
-Finally, name the secret and press **Apply**. This will create a dataflow endpoint that we use later.
+  ![Fabric Username](./images/username_reference.png "Fabric Username")
+
+* **Password**: Add a reference with the value set to the **Connection string – primary key** copied from the Fabric Kafka credentials pane.
+
+  ![Fabric Password](./images/password_reference.png "Fabric Password")
+
+---
+
+#### 3. Apply and Save Endpoint
+
+1. Assign a **name** to the secret.
+2. Click **Apply** to create the Fabric endpoint.
+
+The new endpoint will now appear under **Data flow endpoints** and be available for selection when creating the Dataflow.
 
 ![Endpoint Apply](./images/endpoint_apply.png "Endpoint Apply")
+
+---
+
+#### 4. Create Dataflow
+
+1. In the portal, go to the **Data flows** pane and click **Create data flow**:
+
+   ![Create Data flow](./images/create_dataflow.png "Create Data flow")
+
+---
+
+#### 5. Select Destination
+
+1. In the wizard, click **Select destination**.
+
+2. Choose the Fabric endpoint created earlier, then click **Proceed**:
+
+   ![Select Fabric Endpoint](./images/select_fabricendpoint.png "Select Fabric Endpoint")
+
+3. On the next screen, copy the **Topic name** from the Fabric Kafka credentials pane into the **Topic** field:
+
+   ![Fabric Topic](./images/select_fabricendpoint_topic.png "Fabric Topic")
+
+4. Press **Apply** to confirm the destination.
+
+
