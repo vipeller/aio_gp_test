@@ -134,7 +134,7 @@ BODY="$(jq -c -n \
       documentationUri: $props.documentationUri,
       serialNumber: $props.serialNumber,
       deviceRef: $props.deviceRef,
-      discoveredAssetRefs: [$props.externalAssetId],
+      discoveredAssetRefs: [$props.discoveryId],
       assetTypeRefs: $props.assetTypeRefs,
       datasets: $props.datasets,
       events: $props.events,
