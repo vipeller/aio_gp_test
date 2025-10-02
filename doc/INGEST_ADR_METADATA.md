@@ -1,16 +1,18 @@
-# Ingest Asset Metadata from Azure Device Registry to Microsoft Fabric 
+# Ingest Asset Metadata from ADR to Microsoft Fabric 
 Ingest asset metadata stored in Azure Device Registry (ADR) into a Lakehouse table within Microsoft Fabric. This metadata provides essential context, such as version, manufacturer, location, and custom attributes, that can be mapped to entities in Ontology. When combined with telemetry data, it enables more accurate modeling, monitoring, and analysis of your assets and operations. 
 
 ## 1. Create a Dataflow Gen2  
 
 1. Go to your Fabric enabled workspace
-2 .Click **New item** and select **Dataflow Gen2** in the create menu. For more information, see: [Differences between Dataflow Gen1 and Dataflow Gen2 - Microsoft Fabric | Microsoft Learn](https://learn.microsoft.com/en-us/fabric/data-factory/dataflows-gen2-overview)
+2 .Click **New item** and select **Dataflow Gen2** in the create menu.
+    > For more information, see [Differences between Dataflow Gen1 and Dataflow Gen2 - Microsoft Fabric | Microsoft Learn](https://learn.microsoft.com/en-us/fabric/data-factory/dataflows-gen2-overview)
 3. Enter a **name** for the Dataflow Gen 2 and optionally enable **CI/CD and Git integration** for advanced scheduling and version control
 
 ## 2. Configure the Azure Device Registry (ADR) Connector 
 
 1. Click on **Get Data** or **Get data from another source**.
-2. In **Choose a data source**, search for the **Azure Device Registry (preview)** connector and click on it. For more information, see: [Azure Device Registry connector - Power Query | Microsoft Learn](https://learn.microsoft.com/en-us/power-query/connectors/azure-device-registry)
+2. In **Choose a data source**, search for the **Azure Device Registry (preview)** connector and click on it. 
+    > For more information, see: [Azure Device Registry connector - Power Query | Microsoft Learn](https://learn.microsoft.com/en-us/power-query/connectors/azure-device-registry)
 3. In **Connect to data source**, select a scope and fill in any optional or advanced fields
 
 |Field|Description |
