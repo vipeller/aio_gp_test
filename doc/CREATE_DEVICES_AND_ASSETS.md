@@ -1,4 +1,4 @@
-#Create Device, discover and Import Assets  
+# Create Devices, Discover and Import Assets  
 Create a device with an OPCUA device inbound endpoint and enable it for discovery to start importing assets using the Operations Experience UI: 
 
 ## 1. Create a device with OPCUA device inbound endpoint 
