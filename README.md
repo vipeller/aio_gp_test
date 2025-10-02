@@ -85,7 +85,7 @@ Create a device with an OPCUA device inbound endpoint and enable it for discover
 Ingest asset telemetry from Azure IoT Operations (AIO) into a Lakehouse table within Microsoft Fabric. Once ingested, the telemetry can then be mapped to entities in Ontology, enabling rich digital representations of assets.
 
 #### 1. Create an Eventstream in Microsoft Fabric 
-Set up an Eventstream destination to receive telemetry using the Microsoft Fabric UI. For step-by-step instructions see [Create an Eventstream in Microsoft Fabric]./doc/CREATE_EVENTSTREAM.md)
+Set up an Eventstream destination to receive telemetry using the Microsoft Fabric UI. For step-by-step instructions see [Create an Eventstream in Microsoft Fabric](./doc/CREATE_EVENTSTREAM.md)
 
 > ⚡ **Fast-Track:** Run the following script to automate Eventstream creation: 
 >```bash
