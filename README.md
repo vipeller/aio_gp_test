@@ -53,50 +53,63 @@ The private preview introduces powerful integration capabilities that enable cus
 - A deployed AIO instance (version 1.2.x)
 - An Ontology item in Microsoft Fabric. See [Digital Twin Builder (Preview) Tutorial: Set Up Resources](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/digital-twin-builder/tutorial-1-set-up-resources) for more details.
 
-> **Important:** If you plan to use automation scripts for any step in this guide, you must first complete the QuickStart setup.
+> **Important:** If you plan to use automation scripts for any step in this guide, you must first complete the [QuickStart setup](./doc/QUICK_START_INIT.md).
 ---
 
 ## Discover and Import OPC UA Assets 
 Identify, annotate, and onboard OPC UA assets at the edge using Akri and Azure IoT Operations. The following steps are performed in the [Operations Experience](https://iotoperations.azure.com/) web UI. See [Manage resources in the operations experience UI](https://learn.microsoft.com/en-us/azure/iot-operations/discover-manage-assets/howto-use-operations-experience) to learn more.
 
-#### 1. Create an OPC Publisher Akri Connector Template 
+#### 1. Create an OPC Publisher Akri Connector
 Use the following script to create an OPC Publisher and connect it to your MQ:
-```bash 
-<script>
- ```
+```bash
+./deploy_opc_publisher_template.sh \
+./deploy_opc_publisher_instance.sh
+```
 #### 2. (Optional) Deploy Simulation Layer 
 Deploy a device simulator (UMATI) to simulate devices and assets:
 ```bash 
-<script>
+./deploy_umati.sh
  ```
 #### 3. Discover and Import Assets 
-Create an asset endpoint and enable it for discovery to start importing assets using the **Operations Experience** UI:
+Create an asset endpoint and enable it for discovery to start importing assets using the [Operations Experience UI](./doc/ONBOARD_UMATI_ASSET.md)
 
 > ⚡ **Fast-Track:** Run the following script to automate asset endpoint creation and asset onboarding:
-> ```bash 
-> <script>
-> ```
+```bash 
+./deploy_umati_with_device.sh \
+./onboard_fullmachine.sh
+```
 
 ## Ingest Asset Telemetry to Microsoft Fabric  
 Ingest asset telemetry from Azure IoT Operations (AIO) into a Lakehouse table within Microsoft Fabric. Once ingested, the telemetry can then be mapped to entities in Ontology, enabling rich digital representations of assets.  
 
 #### 1. Create an Eventstream in Microsoft Fabric 
-Set up an Eventstream destination to receive telemetry using the Microsoft Fabric UI:
+Set up an Eventstream destination to receive telemetry using the [Microsoft Fabric UI](./doc/CREATE_EVENTSTREAM.md)
 
 > ⚡ **Fast-Track:** Run the following script to automate Eventstream creation: 
-> ```bash 
-> <script>
-> ```
+```bash
+# Optional: use a specific Fabric workspace instead of "My workspace"
+# export FABRIC_WORKSPACE_ID="<workspace-guid>"
+
+# Optional: change the display name (default: DTB-GP-Test)
+# export DISPLAY_NAME="DTB-GP-Custom"
+
+./deploy_eventstream.sh
+```
+
+Creates a Fabric Eventstream. Saves source credentials to `./creds/dtb_hub_cred.json`.
+
+⚠️ Treat that file as a secret and delete it once your deployment is configured.
+
 
 #### 2. Create an Azure IoT Operations Dataflow 
-Configure a dataflow to route telemetry from AIO to the Eventstream using the **Operations Experience** UI:
+Configure a dataflow to route telemetry from AIO to the Eventstream using the [Operations Experience UI](./doc/CREATE_DATAFLOW.md)
 
- Run the following script to automate Dataflow creation: <script> 
 > ⚡ **Fast-Track:** Run the following script to automate Dataflow creation:
-> > ⚠️ This script only works if the Eventstream was created using the **fast-track script**. 
-> ```bash 
-> <script>
-> ```
+> ⚠️ This script only works if the **Eventstream** was created using the **fast-track script**. 
+
+```bash
+./deploy_dataflow.sh
+```
 
 #### 3. Setup Eventstream for Telemetry Ingestion in Microsoft Fabric 
 

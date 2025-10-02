@@ -152,3 +152,80 @@ else
     sleep 5
   done
 fi
+
+# -------- Create ADR namespaced devices for "umati" --------
+log "Creating ADR devices for simulation 'umati'…"
+
+# AssetTypes for umati
+assetTypes=( "nsu=http://opcfoundation.org/UA/MachineTool/;i=13" ) # machine tool
+
+# Base ADR resource
+ADR_RESOURCE="/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.DeviceRegistry/namespaces/${ADR_NAMESPACE_NAME}"
+
+# Loop over simulator instances
+for ((i=0; i<COUNT; i++)); do
+  suffix=$(printf "%06d" "$i")
+  deviceName="umati-${suffix}"
+  deviceResource="${ADR_RESOURCE}/devices/${deviceName}"
+
+  log "Checking if device '$deviceName' exists…"
+  if ! device_json="$(az rest --method get \
+        --url "${deviceResource}?api-version=${API}" \
+        --headers "Content-Type=application/json" \
+        --only-show-errors 2>/dev/null || true)"; then
+    device_json=""
+  fi
+
+  device_id="$(jq -r '.id // empty' <<<"$device_json")"
+  if [[ -n "$device_id" ]]; then
+    ok "Device $device_id already exists"
+    continue
+  fi
+
+  # Build OPC UA endpoint address inside K8s cluster
+  address="umati-${DEPLOYMENT_NAME}-${suffix}.${NAMESPACE}.svc.cluster.local"
+  address="opc.tcp://${address}:4840"
+
+  # Compose body
+  BODY="$(jq -n \
+    --arg ext "$(jq -c '.extendedLocation' <<<"$AIO_JSON")" \
+    --arg loc "$LOCATION" \
+    --arg addr "$address" \
+    --argjson ats "$(printf '%s\n' "${assetTypes[@]}" | jq -R . | jq -s .)" '
+  {
+    extendedLocation: ($ext | fromjson),
+    location: $loc,
+    properties: {
+      enabled: true,
+      attributes: { deviceType: "LDS" },
+      endpoints: {
+        inbound: {
+          none: {
+            address: $addr,
+            endpointType: "Microsoft.OpcPublisher",
+            version: "2.9",
+            authentication: { method: "Anonymous" },
+            additionalConfiguration: {
+              EndpointSecurityMode: "None",
+              EndpointSecurityPolicy: "None",
+              RunAssetDiscovery: true,
+              AssetTypes: $ats
+            } | tostring
+          }
+        }
+      }
+    }
+  }')"
+
+  # Create device
+  log "Creating ADR namespaced device $deviceName…"
+  if new_device="$(az rest --method put \
+        --url "${deviceResource}?api-version=${API}" \
+        --headers "Content-Type=application/json" \
+        --body "$BODY" --only-show-errors)"; then
+    ok "ADR namespaced device $(jq -r '.id' <<<"$new_device") created."
+  else
+    err "Failed to create device $deviceName"
+    exit 1
+  fi
+done
