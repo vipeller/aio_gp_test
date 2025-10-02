@@ -106,6 +106,7 @@ Set up an Eventstream destination to receive telemetry using the [Microsoft Fabr
 Configure a dataflow to route telemetry from AIO to the Eventstream using the [Operations Experience UI](./doc/CREATE_DATAFLOW.md)
 
 > ⚡ **Fast-Track:** Run the following script to automate Dataflow creation:
+> 
 > ⚠️ This script only works if the **Eventstream** was created using the **fast-track script**. 
 >
 >```bash
