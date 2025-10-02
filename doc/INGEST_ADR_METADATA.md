@@ -38,7 +38,7 @@ To successfully import asset metadata into Ontology, the metadata must be scoped
    a. Locate the **AssetTypeRef** column
    b. Filter to a single asset type using the dropdown next to the column name.
 
-    ![Filtering Reference Table(./images/adr_connector_filtering_reference_table.png "Filtering Reference Table")
+    ![Filtering Reference Table](./images/adr_connector_filtering_reference_table.png "Filtering Reference Table")
 4. (Optional) Rename the table with a friendly name to reflect the asset type
 5. Repeat for each asset type you want to map in Ontology
 
