@@ -35,8 +35,8 @@ To successfully import asset metadata into Ontology, the metadata must be scoped
    
     ![Creating a Reference](./images/adr_connector_reference_table.png "Creating a Reference")
 2. In the new reference table:
-   a. Locate the **AssetTypeRef** column
-   b. Filter to a single asset type using the dropdown next to the column name.
+   1. Locate the **AssetTypeRef** column
+   2. Filter to a single asset type using the dropdown next to the column name.
 
     ![Filtering Reference Table](./images/adr_connector_filtering_reference_table.png "Filtering Reference Table")
 4. (Optional) Rename the table with a friendly name to reflect the asset type
@@ -47,15 +47,15 @@ To successfully import asset metadata into Ontology, the metadata must be scoped
 1. Click **+** next to **Data destination** at the bottom-right of the Dataflow page
 2. Select **Lakehouse**.
 4. In the **Connect to destination** menu, verify you're signed in with your organizational account. If not, sign in and click **Next**.
-5. In **Choose destination target**: 
-  a.  Select **Create new table** at the top left 
-  b. Choose your **workspace folder**
-  c. Select your **Lakehouse**
-  d. Name your **table** (e.g., Namespace Asset Metadata) 
-  e. Click **Next **
-6. In **Choose destination settings**:
-   a. Keep **Use automatic settings** toggled on
-   b. Click **Save settings**
+5. In **Choose destination target**:
+    1.  Select **Create new table** at the top left
+    2. Choose your **workspace folder**
+    3. Select your **Lakehouse**
+    4. Name your **table**
+    5. Click **Next**
+7. In **Choose destination settings**:
+   1. Keep **Use automatic settings** toggled on
+   2. Click **Save settings**
 
 ## 5. Run and Verify the Dataflow Gen2
 1. Click **Save and Run**
