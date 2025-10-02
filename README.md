@@ -23,14 +23,14 @@ The private preview introduces powerful integration capabilities that enable cus
 
 ## **How Data Comes Together**
 
-### 1. Model Management Workflow
+#### 1. Model Management Workflow
 - Microsoft-curated Asset definition, derived from OPC UA companion specs, define asset types and capabilities. These definitions are imported into DTB for entity creation and used in Azure IoT operations for asset discovery and selection. 
 
 - Within Azure IoT operations, definitions are embedded in device endpoint configurations, enabling the discovery handler to identify matching assets. DTB models these definitions as entity types for downstream operations. 
 
 - As a result, no manual model uploads are required and customers benefit from a curated, ready-to-use model library, ensuring consistency and accelerating onboarding.  
 
-### 2. Asset Data Ingestion Workflow 
+#### 2. Asset Data Ingestion Workflow 
 
 - Assets are discovered via OPC UA handlers and onboarded into Azure Device Registry (ADR) with rich metadata. The ADR connector ingests these assets into a Lakehouse table in Microsoft Fabric, filtering by asset type, preserving all metadata and lineage. 
 
@@ -38,7 +38,7 @@ The private preview introduces powerful integration capabilities that enable cus
 
 - As a result, Customers gain full control and visibility over asset onboarding and mapping, ensuring data integrity and traceability across the stack.  
 
-### 3. Streaming Data Flow 
+#### 3. Streaming Data Flow 
 
 - Once assets are configured and operational, the AIO connector publishes telemetry to MQ broker and using AIO’s dataflow the data is sent to Fabric destination namely Eventstream with Cloud Events headers. DTB entities ingest this telemetry directly from Eventstream. 
 
@@ -59,17 +59,17 @@ The private preview introduces powerful integration capabilities that enable cus
 ## Discover and Import OPC UA Assets 
 Identify, annotate, and onboard OPC UA assets at the edge using Akri and Azure IoT Operations. The following steps are performed in the [Operations Experience](https://iotoperations.azure.com/) web UI. See [Manage resources in the operations experience UI](https://learn.microsoft.com/en-us/azure/iot-operations/discover-manage-assets/howto-use-operations-experience) to learn more.
 
-### 1. Create an OPC Publisher Akri Connector Template 
+#### 1. Create an OPC Publisher Akri Connector Template 
 Use the following script to create an OPC Publisher and connect it to your MQ:
 ```bash 
 <script>
  ```
-### 2. (Optional) Deploy Simulation Layer 
+#### 2. (Optional) Deploy Simulation Layer 
 Deploy a device simulator (UMATI) to simulate devices and assets:
 ```bash 
 <script>
  ```
-### 3. Discover and Import Assets 
+#### 3. Discover and Import Assets 
 Create an asset endpoint and enable it for discovery to start importing assets using the **Operations Experience** UI:
 
 > ⚡ **Fast-Track:** Run the following script to automate asset endpoint creation and asset onboarding:
@@ -80,7 +80,7 @@ Create an asset endpoint and enable it for discovery to start importing assets u
 ## Ingest Asset Telemetry to Microsoft Fabric  
 Ingest asset telemetry from Azure IoT Operations (AIO) into a Lakehouse table within Microsoft Fabric. Once ingested, the telemetry can then be mapped to entities in Ontology, enabling rich digital representations of assets.  
 
-### 1. Create an Eventstream in Microsoft Fabric 
+#### 1. Create an Eventstream in Microsoft Fabric 
 Set up an Eventstream destination to receive telemetry using the Microsoft Fabric UI:
 
 > ⚡ **Fast-Track:** Run the following script to automate Eventstream creation: 
@@ -88,7 +88,7 @@ Set up an Eventstream destination to receive telemetry using the Microsoft Fabri
 > <script>
 > ```
 
-### 2. Create an Azure IoT Operations Dataflow 
+#### 2. Create an Azure IoT Operations Dataflow 
 Configure a dataflow to route telemetry from AIO to the Eventstream using the **Operations Experience** UI:
 
  Run the following script to automate Dataflow creation: <script> 
@@ -98,18 +98,18 @@ Configure a dataflow to route telemetry from AIO to the Eventstream using the **
 > <script>
 > ```
 
-### 3. Setup Eventstream for Telemetry Ingestion in Microsoft Fabric 
+#### 3. Setup Eventstream for Telemetry Ingestion in Microsoft Fabric 
 
-## Ingest Asset Metadata from Azure Device Registry to Microsoft Fabric
+## Ingest Asset Metadata from ADR to Microsoft Fabric
 Ingest asset metadata stored in Azure Device Registry (ADR) into a Lakehouse table within Microsoft Fabric. This metadata provides essential context, such as version, manufacturer, location, and custom attributes, that can be mapped to entities in Ontology. When combined with telemetry data, it enables more accurate modeling, monitoring, and analysis of your assets and operations. See [Ingest Asset Metadata from ADR to Microsoft Fabric](doc/INGEST_ADR_METADATA.md) for steps using the Microsoft Fabric UI.
 
 ## Create Digital Representations of Assets in Ontology
 Use the imported metadata and telemetry of assets to build rich digital represenations in Ontology.
 
-### 1. Map Azure Device Registry Assets to Entities in Ontology 
+#### 1. Map Azure Device Registry Assets to Entities in Ontology 
 Link asset metadata (non-timeseries data) from a Lakehouse table to an entity instance. 
 
-### 2. Map Asset Telemetry to Entities in Ontology 
+#### 2. Map Asset Telemetry to Entities in Ontology 
 Link asset telemetry (timeseries data) from Eventstream to an entity instance. 
 
 
