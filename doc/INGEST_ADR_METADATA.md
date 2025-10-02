@@ -14,6 +14,8 @@ Ingest asset metadata stored in Azure Device Registry (ADR) into a Lakehouse tab
 2. In **Choose a data source**, search for the **Azure Device Registry (preview)** connector and click on it. 
     > For more information, see: [Azure Device Registry connector - Power Query | Microsoft Learn](https://learn.microsoft.com/en-us/power-query/connectors/azure-device-registry)
 3. In **Connect to data source**, select a scope and fill in any optional or advanced fields
+   
+    ![ADR Connector Configuration Settings](./images/adr_connector_configuration.png "ADR Connector Configuration Settings")
 
 |Field|Description |
 |-----|------------|
@@ -30,11 +32,15 @@ Ingest asset metadata stored in Azure Device Registry (ADR) into a Lakehouse tab
 To successfully import asset metadata into Ontology, the metadata must be scoped to specific asset types. This is because in Ontology, each metadata table corresponds to a distinct entity type defined in the asset definition. One way to do this is by using the Reference feature in Dataflow Gen 2: 
 
 1. In your Dataflow Gen2, right-click the metadata table and select **Reference**
+   
+    ![Creating a Reference](./images/adr_connector_reference_table.png "Creating a Reference")
 2. In the new reference table:
    a. Locate the **AssetTypeRef** column
    b. Filter to a single asset type using the dropdown next to the column name.
-3. (Optional) Rename the table with a friendly name to reflect the asset type
-4. Repeat for each asset type you want to map in Ontology
+
+    ![Creating a Reference](./images/adr_connector_filtering_reference_table.png "Creating a Reference")
+4. (Optional) Rename the table with a friendly name to reflect the asset type
+5. Repeat for each asset type you want to map in Ontology
 
 ## 4. Send data to a Lakehouse Table 
 
