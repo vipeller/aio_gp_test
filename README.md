@@ -57,7 +57,7 @@ The private preview introduces powerful integration capabilities that enable cus
 ---
 
 ## Discover and Import OPC UA Assets by Asset Types
-Identify, annotate, and onboard OPC UA assets at the edge using Akri and Azure IoT Operations. he following steps are performed in the [Operations Experience](https://iotoperations.azure.com/) web UI. See [Manage resources in the operations experience UI](https://learn.microsoft.com/en-us/azure/iot-operations/discover-manage-assets/howto-use-operations-experience) to learn more.
+Identify, annotate, and onboard OPC UA assets at the edge using Akri and Azure IoT Operations. The following steps are performed in the [Operations Experience](https://iotoperations.azure.com/) web UI. See [Manage resources in the operations experience UI](https://learn.microsoft.com/en-us/azure/iot-operations/discover-manage-assets/howto-use-operations-experience) to learn more.
 
 
 #### 1. Create an OPC Publisher Akri Connector
@@ -79,6 +79,7 @@ Create a device with an OPCUA device inbound endpoint and enable it for discover
 >./deploy_umati_with_device.sh \
 >./onboard_fullmachine.sh
 >```
+> See [Onboarding UMATI Assets](./doc/CREATE_DEVICES_AND_ASSETS.md) for more details.
 
 ## Ingest Asset Telemetry to Microsoft Fabric  
 Ingest asset telemetry from Azure IoT Operations (AIO) into a Lakehouse table within Microsoft Fabric. Once ingested, the telemetry can then be mapped to entities in Ontology, enabling rich digital representations of assets.
