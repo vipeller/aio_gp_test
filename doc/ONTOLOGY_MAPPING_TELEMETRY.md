@@ -11,5 +11,5 @@
    ![Timseries Mapping](./images/timeseries_mapping.png "Timeseries Mapping")
 7. Under **Timeseries** select the **Add timeseries property** button to map other relevant timeseries properties from your source table on your entity type.
 8. Select **Save** to save your mapping configuration.
-9. Go to the **Scheduling** tab to run your mapping job. Under the name of your mapping job, select Run.
+9. Go to the **Scheduling** tab to run your mapping job. Under the name of your mapping job, select **Run**.
 10. Check the status of your mapping job in the **Manage operations** tab. Wait for the status to say **Completed** before proceeding to the next section (you might need to refresh the content a few times).
