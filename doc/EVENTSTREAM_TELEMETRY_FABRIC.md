@@ -27,7 +27,7 @@
 
     ![Eventstream Flow](./images/eventstream_flow.png "Eventstream Flow")
 
-6. Select **Publich** to commit yout changes. This action switches your eventstream from Edit mode to Live view, initiating real-time data processing.
+6. Select **Publish** to commit yout changes. This action switches your eventstream from Edit mode to Live view, initiating real-time data processing.
 
 ## 3. Verify Telemetry Flow
 Navigate to your **Eventhouse** to confirm that telemetry is flowing from Azure IoT Operations.
