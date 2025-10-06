@@ -122,7 +122,12 @@ Ingest asset telemetry from Azure IoT Operations (AIO) into a Lakehouse table wi
 ### 1. Create an Eventstream in Microsoft Fabric 
 Set up an Eventstream destination to receive telemetry using the Microsoft Fabric UI: *[Create an Eventstream in Microsoft Fabric](./doc/CREATE_EVENTSTREAM.md)*.
 
-> ⚡ **Fast-Track:** Run the following script to automate Eventstream creation: 
+> ⚡ **Fast-Track:** Run the following script to automate Eventstream creation.
+> 
+> This script:
+> - Creates a Fabric Eventstream.
+> - Saves source credentials to `./creds/dtb_hub_cred.json`.
+>   
 >```bash
 ># Optional: use a specific Fabric workspace instead of "My workspace"
 ># export FABRIC_WORKSPACE_ID="<workspace-guid>"
@@ -132,12 +137,8 @@ Set up an Eventstream destination to receive telemetry using the Microsoft Fabri
 >
 >./deploy_eventstream.sh
 >```
+> ⚠️ Treat that file as a secret and delete it once your deployment is configured.
 >
->Creates a Fabric Eventstream. Saves source credentials to `./creds/dtb_hub_cred.json`.
-
-> [!CAUTION]
-> Treat that file as a secret and delete it once your deployment is configured.
-
 
 ### 2. Create an Azure IoT Operations Dataflow 
 Configure a Dataflow to route telemetry from AIO to your Eventstream via the Operations Experience: *[Create a Dataflow](./doc/CREATE_DATAFLOW.md)*
@@ -146,9 +147,8 @@ Configure a Dataflow to route telemetry from AIO to your Eventstream via the Ope
 >```bash
 >./deploy_dataflow.sh
 >```
-
-> [!CAUTION]
-> The fast-track dataflow script assumes the Eventstream was created using this repo’s fast-track script.
+>
+> ⚠️ This fast-track script can only be used if the Eventstream was created using the fast-track script from the previous step.
 
 ### 3. Setup Eventstream for Telemetry Ingestion in Microsoft Fabric 
 See *[Ingest Asset Telemetry to Microsoft Fabric](./doc/EVENTSTREAM_TELEMETRY_FABRIC.md)* for full instructions.
