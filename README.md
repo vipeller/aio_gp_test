@@ -49,11 +49,14 @@ The private preview introduces powerful integration capabilities that enable cus
 --- 
 
 ## Prerequisites
-- An Azure subscription. Go to [Get Azure free trial](https://azure.microsoft.com/pricing/free-trial/)
-- A deployed AIO instance (version 1.2.x)
+- An Azure subscription. If you don't have an Azure subscription, [create one for free](https://azure.microsoft.com/pricing/free-trial/) before you begin.
+- A deployed Azure IoT Operations instance (version 1.2.x).
+- An Azure Device Registry namespace to store your namespace assets and devices.
+- A Microsoft Fabric subscription. In your subscription, you need access to a workspace with Contributor or above permissions.
+- A Fabric tenant that allows the creation of real-time dashboards. Your tenant administrator can enable this setting. For more information, see [Enable tenant settings in the admin portal](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/dashboard-real-time-create#enable-tenant-settings-in-the-admin-portal).
 - An Ontology item in Microsoft Fabric. See [Digital Twin Builder (Preview) Tutorial: Set Up Resources](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/digital-twin-builder/tutorial-1-set-up-resources) for more details.
 
-> **Important:** If you plan to use automation scripts for any step in this guide, you must first complete the [QuickStart setup](./doc/QUICK_START_INIT.md).
+> ⚠️ **Important:** If you plan to use automation scripts for any step in this guide, you must first complete the [QuickStart setup](./doc/QUICK_START_INIT.md).
 ---
 
 ## Discover and Import OPC UA Assets by Asset Types
@@ -80,6 +83,8 @@ Create a device with an OPCUA device inbound endpoint and enable it for discover
 >./onboard_fullmachine.sh
 >```
 > See [Onboarding UMATI Assets](./doc/CREATE_DEVICES_AND_ASSETS.md) for more details.
+
+---
 
 ## Ingest Asset Telemetry to Microsoft Fabric  
 Ingest asset telemetry from Azure IoT Operations (AIO) into a Lakehouse table within Microsoft Fabric. Once ingested, the telemetry can then be mapped to entities in Ontology, enabling rich digital representations of assets.
@@ -117,9 +122,11 @@ Configure a dataflow to route telemetry from AIO to the Eventstream using the Op
 #### 3. Setup Eventstream for Telemetry Ingestion in Microsoft Fabric 
 For step-by-step instructions see: [Ingest Asset Telemetry to Microsoft Fabric](./doc/EVENTSTREAM_TELEMETRY_FABRIC.md)
 
+---
 ## Ingest Asset Metadata from ADR to Microsoft Fabric
 Ingest asset metadata stored in Azure Device Registry (ADR) into a Lakehouse table within Microsoft Fabric. This metadata provides essential context, such as version, manufacturer, location, and custom attributes, that can be mapped to entities in Ontology. When combined with telemetry data, it enables more accurate modeling, monitoring, and analysis of your assets and operations. See [Ingest Asset Metadata from ADR to Microsoft Fabric](doc/INGEST_ADR_METADATA.md) for steps using the Microsoft Fabric UI.
 
+---
 ## Create Digital Representations of Assets in Ontology
 Use the imported metadata and telemetry of assets to build rich digital represenations in Ontology.
 
