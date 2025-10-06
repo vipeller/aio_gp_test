@@ -14,8 +14,7 @@
 
 ## Overview
 
-This private preview introduces powerful integration capabilities that enable customers to **seamlessly port assets from Azure Device Registry (ADR), their data models, and operational data from Azure IoT Operations (AIO) into Digital Twin Builder (DTB) within Microsoft Fabric**.  
-By consolidating contextual and operational data in one place, this integration eliminates manual steps and fragmented workflows, allowing users to unlock the full value of their digital operations by transforming raw data into actionable insights with minimal effort.
+This private preview introduces powerful integration capabilities that enable customers to **seamlessly port assets from Azure Device Registry (ADR), their data models, and operational data from Azure IoT Operations (AIO) into Digital Twin Builder (DTB) within Microsoft Fabric**.   By consolidating contextual and operational data in one place, this integration eliminates manual steps and fragmented workflows, allowing users to unlock the full value of their digital operations by transforming raw data into actionable insights with minimal effort.
 
 ## How Each Service Fits In 
 
