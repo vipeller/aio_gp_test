@@ -18,9 +18,9 @@
 
     GETMETADATAPROPERTYVALUE(stream,'[User].[ce_type]') AS type 
 
-    INTO [EventhouseName] FROM [EventStreamName-stream] AS stream
+    INTO [EventhouseName] FROM [EventStreamName] AS stream
     ```
-    > Replace [EventhouseName] and [EventStreamName-stream] with your actual resource names.
+    > Replace [EventhouseName] and [EventStreamName] with your actual resource names.
     
 4. Add a **Destination** step of type Eventhouse, and connect it to the SQL Transform step.
 5. Paste the **Ingestion URI** from Step 1 into the Eventhouse destination configuration.
