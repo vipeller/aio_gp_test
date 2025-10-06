@@ -131,7 +131,7 @@ Ingest asset metadata stored in Azure Device Registry (ADR) into a Lakehouse tab
 Use the imported metadata and telemetry of assets to build rich digital representations in Ontology.
 
 #### 1. Map Azure Device Registry Assets to Entities in Ontology 
-Link asset metadata (non-timeseries data) from a Lakehouse table to an entity instance. For step-by-step instructions see: [Ingest Asset Telemetry to Microsoft Fabric](./doc/ONTOLOGY_MAPPING_METADATA.md)
+Link asset metadata (static data) from a Lakehouse table to an entity instance. For step-by-step instructions see: [Ingest Asset Telemetry to Microsoft Fabric](./doc/ONTOLOGY_MAPPING_METADATA.md)
 
 #### 2. Map Asset Telemetry to Entities in Ontology 
 Link asset telemetry (timeseries data) from Eventstream to an entity instance. For step-by-step instructions see: [ Map Asset Telemetry to Entities in Ontology](./doc/ONTOLOGY_MAPPING_TELEMETRY.md)
