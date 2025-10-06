@@ -5,6 +5,7 @@ For more information, see: [Add Entity Types and Map Data](https://learn.microso
 3. Choose your workspace and the lakehouse table with the asset metadata from Azure Device Registry as your data source.
 4. Next, select **Static** as the **Mapping type** of your data.
 5. Under **Mapped properties** select the ```uuid``` column as the **UniqueIdentifier** of the data and select the **Add static property** button to map other relevant properties from your source table on your entity type.
+   
    ![Static Mapping Type](./images/static_mapping.png "Static Mapping Type")
 7. Select **Save** to save your mapping configuration.
 9. Go to the **Scheduling** tab to run your mapping job. Under the name of your mapping job, select Run.
