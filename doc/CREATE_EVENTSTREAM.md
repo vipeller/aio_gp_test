@@ -1,4 +1,4 @@
-### Create Eventstream
+# Create an Eventstream in Microsoft Fabric
 
 Before setting up a **Dataflow** to push telemetry from AIO into Fabric, we first need to create an **Eventstream** with a **Custom Endpoint source**. This endpoint provides the credentials and connection details that AIO will later use to send data.
 

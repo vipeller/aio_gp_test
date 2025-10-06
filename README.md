@@ -1,9 +1,23 @@
 # One DO Experience - ADR, AIO, DTB
 
+## Table of Contents
+
+- [Overview](#overview)
+  
+- [Prerequisites](#prerequisites)
+  
+- [Step 1: Discover and Import OPC UA Assets](#step-1-discover-and-import-opc-ua-assets)
+  
+- [Step 2: Send Asset data to Microsoft Fabric](#step-2-send-asset-data-to-microsoft-fabric)
+  
+- [Step 3: Create Digital Representations of Assets](#step-3-create-digital-representations-of-assets-in-ontology)
+
 ## Overview
-The private preview introduces powerful integration capabilities that enable customers to seamlessly port defined assets, data models, and operational data from Azure IoT Operations (AIO) and Azure Device Registry (ADR) into Digital Twin Builder (DTB) within Microsoft Fabric. By consolidating contextual and operational data in one place, this integration eliminates manual steps and fragmented workflows, allowing users to move from raw data to actionable insights with minimal effort, unlocking the full value of their digital operations. 
+
+This private preview introduces powerful integration capabilities that enable customers to **seamlessly port assets from Azure Device Registry (ADR), their data models, and operational data from Azure IoT Operations (AIO) into Digital Twin Builder (DTB) within Microsoft Fabric**.   By consolidating contextual and operational data in one place, this integration eliminates manual steps and fragmented workflows, allowing users to unlock the full value of their digital operations by transforming raw data into actionable insights with minimal effort.
 
 ## How Each Service Fits In 
+
 **Azure IoT Operations (AIO)**: A unified data plane for the edge, comprising modular, scalable, and highly available data services that operate on Azure Arc-enabled edge Kubernetes, enabling data capture from various systems. With AIO, customers can discover and onboard their physical assets on factory floors and send structured data with set schemas using connectors (Akri) at the edge all the way to destinations like Microsoft Fabric. 
 
 **Azure Device Registry (ADR)**: A single unified registry for devices and assets across applications running in the cloud or on the edge. In the cloud, assets are represented as Azure resources, enabling management through Azure features like resource groups, tags, RBAC, and policy. On the edge, ADR creates Kubernetes custom resources for each asset and keeps cloud and edge representations in sync. It is the single source of truth for asset metadata, ensuring consistency and allowing customers to manage assets using Azure Resource Manager, APIs, and tools like Azure Resource Graph. 
@@ -11,6 +25,7 @@ The private preview introduces powerful integration capabilities that enable cus
 **Fabric Ontology**: A new component within the Real-Time Intelligence workload in Microsoft Fabric. It creates digital representations of real-world assets and processes using imported models and operational data. With Ontology, customers can leverage low-code/no-code tools for modeling business concepts, building KPIs (such as OEE), and enabling advanced analytics for operational optimization. 
 
 ## **Why this matters:**
+
 - **Single Pane of Glass**: All your operational data: models, assets, and telemetry, are accessible and actionable from Microsoft Fabric. 
 
 - **Edge-to-Cloud Integration**: Data flows smoothly from devices at the edge, through the cloud, and into the applications of your choice. 
@@ -48,81 +63,107 @@ The private preview introduces powerful integration capabilities that enable cus
 
 --- 
 
-## Prerequisites
-- An Azure subscription. Go to [Get Azure free trial](https://azure.microsoft.com/pricing/free-trial/)
-- A deployed AIO instance (version 1.2.x)
+# Prerequisites
+
+- An Azure subscription. 
+  
+- A deployed Azure IoT Operations instance (version 1.2.x).
+  
+- An Azure Device Registry namespace to store your namespace assets and devices.
+
+- A Microsoft Fabric subscription. In your subscription, you need access to a workspace with Contributor or above permissions.
+  
+- A Fabric tenant that allows the creation of real-time dashboards. Your tenant administrator can enable this setting. For more information, see [Enable tenant settings in the admin portal](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/dashboard-real-time-create#enable-tenant-settings-in-the-admin-portal).
+  
 - An Ontology item in Microsoft Fabric. See [Digital Twin Builder (Preview) Tutorial: Set Up Resources](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/digital-twin-builder/tutorial-1-set-up-resources) for more details.
 
-> **Important:** If you plan to use automation scripts for any step in this guide, you must first complete the [QuickStart setup](./doc/QUICK_START_INIT.md).
----
 
-## Discover and Import OPC UA Assets 
-Identify, annotate, and onboard OPC UA assets at the edge using Akri and Azure IoT Operations. The following steps are performed in the [Operations Experience](https://iotoperations.azure.com/) web UI. See [Manage resources in the operations experience UI](https://learn.microsoft.com/en-us/azure/iot-operations/discover-manage-assets/howto-use-operations-experience) to learn more.
+> [!IMPORTANT]
+> If you plan to use automation scripts, complete the [QuickStart Setup](./doc/QUICK_START_INIT.md) first.
 
-#### 1. Create an OPC Publisher Akri Connector
+ ---
+
+# Step 1: Discover and Import OPC UA Assets
+Identify, annotate, and onboard OPC UA assets by asset types at the edge using Akri and Azure IoT Operations. Some steps can be performed using the [Operations Experience](https://iotoperations.azure.com/). 
+
+ 
+### 1. Create an OPC Publisher Akri Connector
 Use the following script to create an OPC Publisher and connect it to your MQ:
 ```bash
 ./deploy_opc_publisher_template.sh \
 ./deploy_opc_publisher_instance.sh
 ```
-#### 2. (Optional) Deploy Simulation Layer 
+
+ ### 2. (Optional) Deploy Simulation Layer
 Deploy a device simulator (UMATI) to simulate devices and assets:
 ```bash 
 ./deploy_umati.sh
  ```
-#### 3. Discover and Import Assets 
-Create an asset endpoint and enable it for discovery to start importing assets using the [Operations Experience UI](./doc/ONBOARD_UMATI_ASSET.md)
+
+### 3. Create Devices, Discover and Import Assets 
+Create a device with an OPCUA device inbound endpoint and enable it for discovery to start importing assets using the Operations Experience UI: *[Create Devices, Discover and Import Assets](./doc/CREATE_DEVICES_AND_ASSETS.md)*.
+
+> [!NOTE]
+> For more details on managing resources in the Operations Experience UI, see [Manage resources in the operations experience UI](https://learn.microsoft.com/en-us/azure/iot-operations/discover-manage-assets/howto-use-operations-experience).
 
 > ⚡ **Fast-Track:** Run the following script to automate asset endpoint creation and asset onboarding:
-```bash 
-./deploy_umati_with_device.sh \
-./onboard_fullmachine.sh
-```
+>```bash 
+>./deploy_umati_with_device.sh \
+>./onboard_fullmachine.sh
+>```
+> See [Onboarding UMATI Assets](./doc/CREATE_DEVICES_AND_ASSETS.md) for more details.
 
-## Ingest Asset Telemetry to Microsoft Fabric  
-Ingest asset telemetry from Azure IoT Operations (AIO) into a Lakehouse table within Microsoft Fabric. Once ingested, the telemetry can then be mapped to entities in Ontology, enabling rich digital representations of assets.  
+---
+# Step 2: Send Asset data to Microsoft Fabric
 
-#### 1. Create an Eventstream in Microsoft Fabric 
-Set up an Eventstream destination to receive telemetry using the [Microsoft Fabric UI](./doc/CREATE_EVENTSTREAM.md)
+## Ingest Asset Telemetry 
+Ingest asset telemetry from Azure IoT Operations (AIO) into a Lakehouse table within Microsoft Fabric. Once ingested, the telemetry can then be mapped to entities in Ontology, enabling rich digital representations of assets.
 
-> ⚡ **Fast-Track:** Run the following script to automate Eventstream creation: 
-```bash
-# Optional: use a specific Fabric workspace instead of "My workspace"
-# export FABRIC_WORKSPACE_ID="<workspace-guid>"
+### 1. Create an Eventstream in Microsoft Fabric 
+Set up an Eventstream destination to receive telemetry using the Microsoft Fabric UI: *[Create an Eventstream in Microsoft Fabric](./doc/CREATE_EVENTSTREAM.md)*.
 
-# Optional: change the display name (default: DTB-GP-Test)
-# export DISPLAY_NAME="DTB-GP-Custom"
+> ⚡ **Fast-Track:** Run the following script to automate Eventstream creation.
+> 
+> This script:
+> - Creates a Fabric Eventstream.
+> - Saves source credentials to `./creds/dtb_hub_cred.json`.
+>   
+>```bash
+># Optional: use a specific Fabric workspace instead of "My workspace"
+># export FABRIC_WORKSPACE_ID="<workspace-guid>"
+>
+># Optional: change the display name (default: DTB-GP-Test)
+># export DISPLAY_NAME="DTB-GP-Custom"
+>
+>./deploy_eventstream.sh
+>```
+> ⚠️ Treat that file as a secret and delete it once your deployment is configured.
+>
 
-./deploy_eventstream.sh
-```
-
-Creates a Fabric Eventstream. Saves source credentials to `./creds/dtb_hub_cred.json`.
-
-⚠️ Treat that file as a secret and delete it once your deployment is configured.
-
-
-#### 2. Create an Azure IoT Operations Dataflow 
-Configure a dataflow to route telemetry from AIO to the Eventstream using the [Operations Experience UI](./doc/CREATE_DATAFLOW.md)
+### 2. Create an Azure IoT Operations Dataflow 
+Configure a Dataflow to route telemetry from AIO to your Eventstream via the Operations Experience: *[Create a Dataflow](./doc/CREATE_DATAFLOW.md)*.
 
 > ⚡ **Fast-Track:** Run the following script to automate Dataflow creation:
-> ⚠️ This script only works if the **Eventstream** was created using the **fast-track script**. 
+>```bash
+>./deploy_dataflow.sh
+>```
+>
+> ⚠️ This fast-track script can only be used if the Eventstream was created using the fast-track script from the previous step.
 
-```bash
-./deploy_dataflow.sh
-```
+### 3. Setup Eventstream for Telemetry Ingestion in Microsoft Fabric 
+See *[Ingest Asset Telemetry to Microsoft Fabric](./doc/EVENTSTREAM_TELEMETRY_FABRIC.md)* for full instructions.
 
-#### 3. Setup Eventstream for Telemetry Ingestion in Microsoft Fabric 
+## Ingest Asset Metadata from Azure Device Registry
+Ingest asset metadata stored in Azure Device Registry (ADR) into a Lakehouse table within Microsoft Fabric. This metadata provides essential context, such as version, manufacturer, location, and custom attributes, that can be mapped to entities in Ontology. When combined with telemetry data, it enables more accurate modeling, monitoring, and analysis of your assets and operations. See *[Ingest Asset Metadata from ADR to Microsoft Fabric](doc/INGEST_ADR_METADATA.md)* for full instructions.
 
-## Ingest Asset Metadata from ADR to Microsoft Fabric
-Ingest asset metadata stored in Azure Device Registry (ADR) into a Lakehouse table within Microsoft Fabric. This metadata provides essential context, such as version, manufacturer, location, and custom attributes, that can be mapped to entities in Ontology. When combined with telemetry data, it enables more accurate modeling, monitoring, and analysis of your assets and operations. See [Ingest Asset Metadata from ADR to Microsoft Fabric](doc/INGEST_ADR_METADATA.md) for steps using the Microsoft Fabric UI.
+---
+# Step 3: Create Digital Representations of Assets in Ontology
+Use the imported metadata and telemetry of assets to build rich digital representations in Ontology.
 
-## Create Digital Representations of Assets in Ontology
-Use the imported metadata and telemetry of assets to build rich digital represenations in Ontology.
+### 1. Create Entities from Entity Types
 
-#### 1. Map Azure Device Registry Assets to Entities in Ontology 
-Link asset metadata (non-timeseries data) from a Lakehouse table to an entity instance. 
+### 2. Map Azure Device Registry Assets to Entities
+Link asset metadata (static data) from a Lakehouse table to an entity instance: *[Map Asset Metadata to Entities](./doc/ONTOLOGY_MAPPING_METADATA.md)*
 
-#### 2. Map Asset Telemetry to Entities in Ontology 
-Link asset telemetry (timeseries data) from Eventstream to an entity instance. 
-
-
+### 3. Map Asset Telemetry to Entities
+Link asset telemetry (timeseries data) from Eventstream to an entity instance: *[Map Asset Telemetry to Entities](./doc/ONTOLOGY_MAPPING_TELEMETRY.md)*
