@@ -1,6 +1,6 @@
 # Setup Eventstream for Telemetry Ingestion in Microsoft Fabric 
 
-## 1. Prepare Eventhouse to receive telemetry from Eventstream 
+## 1. Prepare Eventhouse to Receive Telemetry from Eventstream 
 Navigate to the previously created Eventhouse which will receive telemetry from Eventstream. Save your Fabric Eventhouse **Ingestion URI**.
 
 ## 2. Update Eventstream with a SQL Code Transform and Eventhouse as Target 
