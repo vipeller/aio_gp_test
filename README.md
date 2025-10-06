@@ -141,7 +141,7 @@ Set up an Eventstream destination to receive telemetry using the Microsoft Fabri
 >
 
 ### 2. Create an Azure IoT Operations Dataflow 
-Configure a Dataflow to route telemetry from AIO to your Eventstream via the Operations Experience: *[Create a Dataflow](./doc/CREATE_DATAFLOW.md)*
+Configure a Dataflow to route telemetry from AIO to your Eventstream via the Operations Experience: *[Create a Dataflow](./doc/CREATE_DATAFLOW.md)*.
 
 > ⚡ **Fast-Track:** Run the following script to automate Dataflow creation:
 >```bash
