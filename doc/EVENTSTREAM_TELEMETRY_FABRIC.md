@@ -1,16 +1,14 @@
 # Setup Eventstream for Telemetry Ingestion in Microsoft Fabric 
 
-## 1. Prepare Eventhouse to Receive Telemetry from Eventstream 
-Navigate to the previously created Eventhouse which will receive telemetry from Eventstream. Save your Fabric Eventhouse **Ingestion URI**.
-
-## 2. Update Eventstream with a SQL Code Transform and Eventhouse as Target 
-
-1. Navigate to your Eventstream and add a Transform step of type **SQL Code** in Eventstream.
-
-2. Add a Destination of type **Eventhouse** in Eventstream, and connect it to the SQL Code step. Use the Eventhouse **Ingestion URI** from the previous step.
-
-    Use the following SQL Code: 
-  
+## 1. Prepare Eventhouse to Receive Telemetry
+1. Navigate to the previously created **Eventhouse** in Microsoft Fabric.
+2. Locate and copy the **Ingestion URI**, which will be used to connect Eventstream to Eventhouse.
+   
+## 2. Configure Eventstream with SQL Transform and Eventhouse Target
+1. Open your **Eventstream** in Microsoft Fabric.
+2. Add a **Transform** step of type SQL Code.
+   
+    **SQL Code Example:**
     ```sql
     SELECT 
 
@@ -22,9 +20,16 @@ Navigate to the previously created Eventhouse which will receive telemetry from 
 
     INTO [EventhouseName] FROM [EventStreamName-stream] AS stream
     ```
+    > Replace [EventhouseName] and [EventStreamName-stream] with your actual resource names.
+    
+4. Add a **Destination** step of type Eventhouse, and connect it to the SQL Transform step.
+5. Paste the **Ingestion URI** from Step 1 into the Eventhouse destination configuration.
+
     ![Eventstream Flow](./images/eventstream_flow.png "Eventstream Flow")
 
-## 3. See Data Flowing to your Eventhouse
-Navigate to your Eventhouse to see data flowing from Azure IoT Operations
+6. Select **Publich** to commit yout changes. This action switches your eventstream from Edit mode to Live view, initiating real-time data processing.
+
+## 3. Verify Telemetry Flow
+Navigate to your **Eventhouse** to confirm that telemetry is flowing from Azure IoT Operations.
 
 ![Eventhouse Telemetry](./images/eventhouse_telemetry.png "Eventhouse Telemetry")
