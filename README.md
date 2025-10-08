@@ -77,11 +77,13 @@ This private preview introduces powerful integration capabilities that enable cu
   
 - An Ontology item in Microsoft Fabric. See [Digital Twin Builder (Preview) Tutorial: Set Up Resources](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/digital-twin-builder/tutorial-1-set-up-resources) for more details.
 
+---
+
+# Step 0: Onboard deployment scripts
 
 > [!IMPORTANT]
-> If you plan to use automation scripts, complete the [QuickStart Setup](./doc/QUICK_START_INIT.md) first.
-
- ---
+> Some steps require using automation scripts, while others can be performed manually or through scripts. Before proceeding, ensure you’ve completed the [QuickStart Setup](./doc/QUICK_START_INIT.md)
+ to onboard the scripts into your environment.
 
 # Step 1: Discover and Import OPC UA Assets
 Identify, annotate, and onboard OPC UA assets by asset types at the edge using Akri and Azure IoT Operations. Some steps can be performed using the [Operations Experience](https://iotoperations.azure.com/). 
