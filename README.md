@@ -95,9 +95,10 @@ Use the following script to create an OPC Publisher and connect it to your MQ:
 ./deploy_opc_publisher_template.sh \
 ./deploy_opc_publisher_instance.sh
 ```
+### 2. (Optional) Deploy Simulation Layer
 
- ### 2. (Optional) Deploy Simulation Layer
-Deploy a device simulator (UMATI) to simulate devices and assets:
+Deploy the **UMATI MachineTool Simulator**, which generates realistic OPC UA MachineTool telemetry using the [UMATI Sample Server](https://github.com/umati/Sample-Server).
+This is a simple way to ingest data **without needing real devices or assets connected**.
 ```bash 
 ./deploy_umati.sh
  ```
