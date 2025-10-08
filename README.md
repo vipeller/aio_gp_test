@@ -5,6 +5,8 @@
 - [Overview](#overview)
   
 - [Prerequisites](#prerequisites)
+
+- [Step 0: Onboard deployment scripts](#step-0-onboard-deployment-scripts)
   
 - [Step 1: Discover and Import OPC UA Assets](#step-1-discover-and-import-opc-ua-assets)
   
