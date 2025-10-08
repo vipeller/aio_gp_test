@@ -102,57 +102,6 @@ else
   warn "For Arc clusters, you can use: az connectedk8s proxy -g \"$RESOURCE_GROUP\" -n <arc-cluster>  (then point kubectl to the proxy kubeconfig)"
 fi
 
-# -------- determine chart source (GitHub raw by default) --------
-if [[ -n "$HELM_CHART_PATH" ]]; then
-  [[ -f "$HELM_CHART_PATH" ]] || { err "Local chart not found at $HELM_CHART_PATH"; exit 1; }
-  CHART_SRC="$HELM_CHART_PATH"
-  log "Using local chart: $CHART_SRC"
-else
-  CHART_SRC="https://raw.githubusercontent.com/${GITHUB_ORG}/${GITHUB_REPO}/${GITHUB_BRANCH}/${CHART_PATH_IN_REPO}"
-  log "Using chart from GitHub: $CHART_SRC"
-fi
-
-# -------- helm deploy --------
-log "Deploying Helm release '$DEPLOYMENT_NAME' to namespace '$NAMESPACE'…"
-log "  simulations = $COUNT"
-helm upgrade -i "$DEPLOYMENT_NAME" "$CHART_SRC" \
-  --namespace "$NAMESPACE" --create-namespace \
-  --set "simulations=$COUNT" \
-  --set "deployDefaultIssuerCA=false" \
-  --wait --timeout "${TIMEOUT_SECONDS}s"
-ok "Helm release applied"
-
-# -------- Wait for readiness --------
-label="app.kubernetes.io/instance=${DEPLOYMENT_NAME}"
-log "Waiting for resources with label '$label' in namespace '$NAMESPACE' to become Ready…"
-
-deps="$(kubectl -n "$NAMESPACE" get deploy -l "$label" -o name 2>/dev/null || true)"
-if [[ -n "$deps" ]]; then
-  while read -r d; do
-    [[ -z "$d" ]] && continue
-    log "  -> rollout $d"
-    kubectl -n "$NAMESPACE" rollout status "$d" --timeout="${TIMEOUT_SECONDS}s"
-  done <<< "$deps"
-  ok "All deployments for $DEPLOYMENT_NAME are ready"
-else
-  # Fallback to pods if there are no Deployments
-  for i in {1..60}; do
-    total="$(kubectl -n "$NAMESPACE" get pods -l "$label" -o json | jq '.items | length')"
-    notReady="$(kubectl -n "$NAMESPACE" get pods -l "$label" -o json \
-      | jq '[.items[] | select(.status.phase!="Running" or ([.status.containerStatuses[]? | select(.ready!=true)]|length)>0)] | length')"
-    if [[ "$total" -gt 0 && "$notReady" -eq 0 ]]; then
-      ok "All $total pods Ready."
-      break
-    fi
-    if [[ $i -eq 60 ]]; then
-      err "Timed out waiting for pods to become Ready"
-      exit 1
-    fi
-    log "Pods not ready yet (retry $i/60)…"
-    sleep 5
-  done
-fi
-
 # -------- Create ADR namespaced devices for "umati" --------
 log "Creating ADR devices for simulation 'umati'…"
 

@@ -16,7 +16,7 @@ SCRIPTS=(
   "deploy_opc_publisher_instance.sh"
   "deploy_opc_publisher_discovery_handler.sh"
   "deploy_umati.sh"
-  "deploy_umati_no_dev.sh"
+  "register_umati_device.sh"
   "onboard_fullmachine.sh"
   "deploy_eventstream.sh"
   "deploy_dataflow.sh"

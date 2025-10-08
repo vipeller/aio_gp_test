@@ -111,7 +111,7 @@ Create a device with an OPCUA device inbound endpoint and enable it for discover
 
 > ⚡ **Fast-Track:** Run the following script to automate asset endpoint creation and asset onboarding:
 >```bash 
->./deploy_umati_with_device.sh \
+>./register_umati_device.sh \
 >./onboard_fullmachine.sh
 >```
 > See [Onboarding UMATI Assets](./doc/CREATE_DEVICES_AND_ASSETS.md) for more details.
