@@ -1,0 +1,10 @@
+type_mappings:
+  - typeRef: "opcfoundation.org/UA/Pumps;i=1043"
+    namespace: "AdditiveManufacturing"
+    entity_name: "EquipmentAMType"
+  - typeRef: "opcfoundation.org/UA/Pumps;i=1044"
+    namespace: "AdditiveManufacturing"
+    entity_name: "MachineIdentificationAMType"
+  - typeRef: "opcfoundation.org/UA/Pumps;i=1050"
+    namespace: "Glass_Flat"
+    entity_name: "SealingMaterialType"
