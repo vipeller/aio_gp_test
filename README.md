@@ -12,7 +12,7 @@
   
 - [Step 2: Send Asset data to Microsoft Fabric](#step-2-send-asset-data-to-microsoft-fabric)
   
-- [Step 3: Create Digital Representations of Assets](#step-3-create-digital-representations-of-assets-in-ontology)
+- [Step 3: Create Digital Representations of Assets](#step-3-create-digital-representations-of-assets-in-digital-twin-builder)
 
 ## Overview
 
@@ -24,7 +24,7 @@ This private preview introduces powerful integration capabilities that enable cu
 
 **Azure Device Registry (ADR)**: A single unified registry for devices and assets across applications running in the cloud or on the edge. In the cloud, assets are represented as Azure resources, enabling management through Azure features like resource groups, tags, RBAC, and policy. On the edge, ADR creates Kubernetes custom resources for each asset and keeps cloud and edge representations in sync. It is the single source of truth for asset metadata, ensuring consistency and allowing customers to manage assets using Azure Resource Manager, APIs, and tools like Azure Resource Graph. 
 
-**Fabric Ontology**: A new component within the Real-Time Intelligence workload in Microsoft Fabric. It creates digital representations of real-world assets and processes using imported models and operational data. With Ontology, customers can leverage low-code/no-code tools for modeling business concepts, building KPIs (such as OEE), and enabling advanced analytics for operational optimization. 
+**Digital Twin Builder (DTB)**: A new component within the Real-Time Intelligence workload in Microsoft Fabric. It creates digital representations of real-world assets and processes using imported models and operational data. With DTB, customers can leverage low-code/no-code tools for modeling business concepts, building KPIs (such as OEE), and enabling advanced analytics for operational optimization. 
 
 ## **Why this matters:**
 
@@ -57,7 +57,7 @@ This private preview introduces powerful integration capabilities that enable cu
 
 #### 3. Streaming Data Flow 
 
-- Once assets are configured and operational, the AIO connector publishes telemetry to MQ broker and using AIO’s dataflow the data is sent to Fabric destination namely Eventstream with Cloud Events headers. DTB entities ingest this telemetry directly from Eventstream. 
+- Once assets are configured and operational, the AIO connector publishes telemetry to the MQ broker and using AIO’s dataflow the data is sent to Fabric destination namely Eventstream with Cloud Events headers. DTB entities ingest this telemetry directly from Eventstream. 
 
 - Messages must conform to the model’s structure and naming; no transformation or schema mapping is allowed at this stage for private preview to retain the structure of message. DTB relies on typeref and field name alignment for ingestion. 
 
@@ -77,7 +77,7 @@ This private preview introduces powerful integration capabilities that enable cu
   
 - A Fabric tenant that allows the creation of real-time dashboards. Your tenant administrator can enable this setting. For more information, see [Enable tenant settings in the admin portal](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/dashboard-real-time-create#enable-tenant-settings-in-the-admin-portal).
   
-- An Ontology item in Microsoft Fabric. See [Digital Twin Builder (Preview) Tutorial: Set Up Resources](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/digital-twin-builder/tutorial-1-set-up-resources) for more details.
+- A Digital Twin Builder item in Microsoft Fabric. See [Digital Twin Builder (Preview) Tutorial: Set Up Resources](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/digital-twin-builder/tutorial-1-set-up-resources) for more details.
 
 ---
 
@@ -122,7 +122,7 @@ Create a device with an OPCUA device inbound endpoint and enable it for discover
 # Step 2: Send Asset data to Microsoft Fabric
 
 ## Ingest Asset Telemetry 
-Ingest asset telemetry from Azure IoT Operations (AIO) into a Lakehouse table within Microsoft Fabric. Once ingested, the telemetry can then be mapped to entities in Ontology, enabling rich digital representations of assets.
+Ingest asset telemetry from Azure IoT Operations (AIO) into a Lakehouse table within Microsoft Fabric. Once ingested, the telemetry can then be mapped to entities in Digital Twin Builder, enabling rich digital representations of assets.
 
 ### 1. Create an Eventstream in Microsoft Fabric 
 Set up an Eventstream destination to receive telemetry using the Microsoft Fabric UI: *[Create an Eventstream in Microsoft Fabric](./doc/CREATE_EVENTSTREAM.md)*.
@@ -159,16 +159,16 @@ Configure a Dataflow to route telemetry from AIO to your Eventstream via the Ope
 See *[Ingest Asset Telemetry to Microsoft Fabric](./doc/EVENTSTREAM_TELEMETRY_FABRIC.md)* for full instructions.
 
 ## Ingest Asset Metadata from Azure Device Registry
-Ingest asset metadata stored in Azure Device Registry (ADR) into a Lakehouse table within Microsoft Fabric. This metadata provides essential context, such as version, manufacturer, location, and custom attributes, that can be mapped to entities in Ontology. When combined with telemetry data, it enables more accurate modeling, monitoring, and analysis of your assets and operations. See *[Ingest Asset Metadata from ADR to Microsoft Fabric](doc/INGEST_ADR_METADATA.md)* for full instructions.
+Ingest asset metadata stored in Azure Device Registry (ADR) into a Lakehouse table within Microsoft Fabric. This metadata provides essential context, such as version, manufacturer, location, and custom attributes, that can be mapped to entities in Digital Twin Builder. When combined with telemetry data, it enables more accurate modeling, monitoring, and analysis of your assets and operations. See *[Ingest Asset Metadata from ADR to Microsoft Fabric](doc/INGEST_ADR_METADATA.md)* for full instructions.
 
 ---
-# Step 3: Create Digital Representations of Assets in Ontology
-Use the imported metadata and telemetry of assets to build rich digital representations in Ontology.
+# Step 3: Create Digital Representations of Assets in Digital Twin Builder
+Use the imported metadata and telemetry of assets to build rich digital representations in Digital Twin Builder.
 
 ### 1. Create Entities from Entity Types
 
 ### 2. Map Azure Device Registry Assets to Entities
-Link asset metadata (static data) from a Lakehouse table to an entity instance: *[Map Asset Metadata to Entities](./doc/ONTOLOGY_MAPPING_METADATA.md)*
+Link asset metadata (static data) from a Lakehouse table to an entity instance: *[Map Asset Metadata to Entities](./doc/DTB_MAPPING_METADATA.md)*
 
 ### 3. Map Asset Telemetry to Entities
-Link asset telemetry (timeseries data) from Eventstream to an entity instance: *[Map Asset Telemetry to Entities](./doc/ONTOLOGY_MAPPING_TELEMETRY.md)*
+Link asset telemetry (timeseries data) from Eventstream to an entity instance: *[Map Asset Telemetry to Entities](./doc/DTB_MAPPING_TELEMETRY.md)*
