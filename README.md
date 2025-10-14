@@ -112,10 +112,10 @@ Create a device with an OPCUA device inbound endpoint and enable it for discover
 > For more details on managing resources in the Operations Experience UI, see [Manage resources in the operations experience UI](https://learn.microsoft.com/en-us/azure/iot-operations/discover-manage-assets/howto-use-operations-experience).
 
 > ⚡ **Fast-Track:** Run the following script to automate asset endpoint creation and asset onboarding:
->```bash 
->./register_umati_device.sh \
->./onboard_fullmachine.sh
->```
+```bash 
+/register_umati_device.sh \
+/onboard_fullmachine.sh
+```
 > See [Onboarding UMATI Assets](./doc/CREATE_DEVICES_AND_ASSETS.md) for more details.
 
 ---
