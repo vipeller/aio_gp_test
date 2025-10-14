@@ -5,6 +5,8 @@
 - [Overview](#overview)
   
 - [Prerequisites](#prerequisites)
+
+- [Step 0: Onboard deployment scripts](#step-0-onboard-deployment-scripts)
   
 - [Step 1: Discover and Import OPC UA Assets](#step-1-discover-and-import-opc-ua-assets)
   
@@ -77,15 +79,17 @@ This private preview introduces powerful integration capabilities that enable cu
   
 - An Ontology item in Microsoft Fabric. See [Digital Twin Builder (Preview) Tutorial: Set Up Resources](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/digital-twin-builder/tutorial-1-set-up-resources) for more details.
 
+---
+
+# Step 0: Onboard deployment scripts
 
 > [!IMPORTANT]
-> If you plan to use automation scripts, complete the [QuickStart Setup](./doc/QUICK_START_INIT.md) first.
-
- ---
+> Some steps require using automation scripts, while others can be performed manually or through scripts. Before proceeding, ensure you’ve completed the [QuickStart Setup](./doc/QUICK_START_INIT.md)
+ to onboard the scripts into your environment.
 
 # Step 1: Discover and Import OPC UA Assets
-Identify, annotate, and onboard OPC UA assets by asset types at the edge using Akri and Azure IoT Operations. Some steps can be performed using the [Operations Experience](https://iotoperations.azure.com/). 
 
+Identify, annotate, and onboard OPC UA assets by asset type at the edge using **Akri** and **Azure IoT Operations**. While some steps can be performed directly in the [Operations Experience](https://iotoperations.azure.com/) portal, others — or certain portions of them — must be completed using the provided setup scripts.
  
 ### 1. Create an OPC Publisher Akri Connector
 Use the following script to create an OPC Publisher and connect it to your MQ:
@@ -93,9 +97,10 @@ Use the following script to create an OPC Publisher and connect it to your MQ:
 ./deploy_opc_publisher_template.sh \
 ./deploy_opc_publisher_instance.sh
 ```
+### 2. (Optional) Deploy Simulation Layer
 
- ### 2. (Optional) Deploy Simulation Layer
-Deploy a device simulator (UMATI) to simulate devices and assets:
+Deploy the **UMATI MachineTool Simulator**, which generates realistic OPC UA MachineTool telemetry using the [UMATI Sample Server](https://github.com/umati/Sample-Server).
+This is a simple way to ingest data **without needing real devices or assets connected**.
 ```bash 
 ./deploy_umati.sh
  ```
@@ -107,10 +112,10 @@ Create a device with an OPCUA device inbound endpoint and enable it for discover
 > For more details on managing resources in the Operations Experience UI, see [Manage resources in the operations experience UI](https://learn.microsoft.com/en-us/azure/iot-operations/discover-manage-assets/howto-use-operations-experience).
 
 > ⚡ **Fast-Track:** Run the following script to automate asset endpoint creation and asset onboarding:
->```bash 
->./deploy_umati_with_device.sh \
->./onboard_fullmachine.sh
->```
+```bash 
+./register_umati_device.sh \
+./onboard_fullmachine.sh
+```
 > See [Onboarding UMATI Assets](./doc/CREATE_DEVICES_AND_ASSETS.md) for more details.
 
 ---
