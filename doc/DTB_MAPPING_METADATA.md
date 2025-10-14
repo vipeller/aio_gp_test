@@ -1,4 +1,4 @@
-# Map Azure Device Registry Assets to Entities in Ontology
+# Map Azure Device Registry Assets to Entities in Digital Twin Builder
 > [!NOTE]  
 > For more information, see: [Add Entity Types and Map Data](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/digital-twin-builder/tutorial-2-add-entities-map-data)
 
