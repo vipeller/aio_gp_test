@@ -142,13 +142,13 @@ Ingest asset telemetry from Azure IoT Operations (AIO) into a Lakehouse table wi
 <details>
 <summary>Click to expand/collapse the steps</summary>
 
-#### 1. Create an Eventstream in Microsoft Fabric 
-Set up an Eventstream destination to receive telemetry using the *[Microsoft Fabric UI](./doc/CREATE_EVENTSTREAM.md)*.
+#### 1. Create an Eventhouse and Eventstream in Microsoft Fabric 
+Set up an Eventhouse and Eventstream destination to receive telemetry using the *[Microsoft Fabric UI](./doc/CREATE_EVENTSTREAM.md)*.
 
 > ⚡ **Fast-Track:** Run the following script to automate Eventstream creation.
 > 
 > This script:
-> - Creates a Fabric Eventstream.
+> - Creates a Fabric Eventhouse and Eventstream.
 > - Saves source credentials to `./creds/dtb_hub_cred.json`.
 >   
 >```bash
