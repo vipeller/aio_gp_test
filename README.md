@@ -162,13 +162,14 @@ See *[Ingest Asset Telemetry to Microsoft Fabric](./doc/EVENTSTREAM_TELEMETRY_FA
 Ingest asset metadata stored in Azure Device Registry (ADR) into a Lakehouse table within Microsoft Fabric. This metadata provides essential context, such as version, manufacturer, location, and custom attributes, that can be mapped to entities in Digital Twin Builder. When combined with telemetry data, it enables more accurate modeling, monitoring, and analysis of your assets and operations. See *[Ingest Asset Metadata from ADR to Microsoft Fabric](doc/INGEST_ADR_METADATA.md)* for full instructions.
 
 ---
-# Step 3: Create Digital Representations of Assets in Digital Twin Builder
+# Step 3: Create Digital Representations of Assets with Digital Twin Builder
 Use the imported metadata and telemetry of assets to build rich digital representations in Digital Twin Builder.
 
-### 1. Create Entities from Entity Types
+### 1. Add Entity Types
+Add Entities to your Digital Twin Builder ontology to later hydrate instances of it with data: *[Create Entities in DTB](./doc/DTB_ENTITY_CREATION.md)*
 
-### 2. Map Azure Device Registry Assets to Entities
-Link asset metadata (static data) from a Lakehouse table to an entity instance: *[Map Asset Metadata to Entities](./doc/DTB_MAPPING_METADATA.md)*
+### 2. Map Azure Device Registry Assets to Entity Types
+Link asset metadata (non-timeseries data) from a Lakehouse table to an entity type: *[Map Asset Metadata to Entity Types](./doc/DTB_MAPPING_METADATA.md)*
 
-### 3. Map Asset Telemetry to Entities
-Link asset telemetry (timeseries data) from Eventstream to an entity instance: *[Map Asset Telemetry to Entities](./doc/DTB_MAPPING_TELEMETRY.md)*
+### 3. Map Asset Telemetry to Entity Types
+Link asset telemetry (timeseries data) from Eventstream to an entity type: *[Map Asset Telemetry to Entity Types](./doc/DTB_MAPPING_TELEMETRY.md)*
