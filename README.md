@@ -26,6 +26,8 @@ This private preview introduces powerful integration capabilities that enable cu
 
 **Digital Twin Builder (preview) (DTB)**: A new component within the Real-Time Intelligence workload in Microsoft Fabric. It creates digital representations of real-world assets and processes using imported models and operational data. With DTB, customers can leverage low-code/no-code tools for modeling business concepts, building KPIs (such as OEE), and enabling advanced analytics for operational optimization. 
 
+![OneDOArchitecture](./images/one-do-architechture.png)
+
 ## **Why this matters:**
 
 - **Single Pane of Glass**: All your operational data: models, assets, and telemetry, are accessible and actionable from Microsoft Fabric. 
