@@ -1,4 +1,4 @@
-# One Digital Operations Experience - ADR, AIO, DTB
+# One Digital Operations Experience - *Private Preview*
 
 ### Table of Contents
 
@@ -14,57 +14,74 @@
   
 - [Step 3: Create Digital Representations of Assets](#step-3-create-digital-representations-in-digital-twin-builder)
 
-# Overview
+# Overview 
 
-This private preview introduces powerful integration capabilities that enable customers to **seamlessly port assets from Azure Device Registry (ADR), their data models, and operational data from Azure IoT Operations (AIO) into Digital Twin Builder (DTB) within Microsoft Fabric**.   By consolidating contextual and operational data in one place, this integration eliminates manual steps and fragmented workflows, allowing users to unlock the full value of their digital operations by transforming raw data into actionable insights with minimal effort.
+This private preview introduces the **One Digital Operations (One DO) Experience**, designed to unify industrial IoT data across edge and cloud. It enables organizations to seamlessly integrate **Azure Device Registry (ADR)** assets, their operational data from **Azure IoT Operations (AIO)**, and standarized data models into **Microsoft Fabric** and **Digital Twin Builder (DTB)** (preview) for advanced analytics and accurate representations of their IoT environment.
 
-## How Each Service Fits In 
+With this integration, you can:
 
-**Azure IoT Operations (AIO)**: A unified data plane for the edge, comprising modular, scalable, and highly available data services that operate on Azure Arc-enabled edge Kubernetes, enabling data capture from various systems. With AIO, customers can discover and onboard their physical assets on factory floors and send structured data with set schemas using connectors (Akri) at the edge all the way to destinations like Microsoft Fabric. 
+- **Discover OPC UA assets at the edge** with an OPC Publisher Akri connector in AIO and onboard them into ADR in the cloud.
+  
+- **Leverage Microsoft-curated asset models**, derived from OPC UA companion specifications, for consistent asset definitions.
+  
+- **Stream asset telemetry and metadata** from AIO and ADR into Microsoft Fabric, for rich digital representations of assets and insigts in DTB.
 
-**Azure Device Registry (ADR)**: A single unified registry for devices and assets across applications running in the cloud or on the edge. In the cloud, assets are represented as Azure resources, enabling management through Azure features like resource groups, tags, RBAC, and policy. On the edge, ADR creates Kubernetes custom resources for each asset and keeps cloud and edge representations in sync. It is the single source of truth for asset metadata, ensuring consistency and allowing customers to manage assets using Azure Resource Manager, APIs, and tools like Azure Resource Graph. 
+This experience eliminates manual steps and fragmented workflows, providing a single pane of glass for digital operations—from factory floor to predictive analytics.
 
-**Digital Twin Builder (preview) (DTB)**: A new component within the Real-Time Intelligence workload in Microsoft Fabric. It creates digital representations of real-world assets and processes using imported models and operational data. With DTB, customers can leverage low-code/no-code tools for modeling business concepts, building KPIs (such as OEE), and enabling advanced analytics for operational optimization. 
+## One DO Building Blocks
+Each component plays a critical role in delivering a unified edge-to-cloud integration:
+
+**Azure IoT Operations (AIO)**: A unified data plane for the edge, comprising modular, scalable, and highly available data services that operate on Azure Arc-enabled edge Kubernetes. With AIO, customers can discover and onboard their physical assets on factory floors and send structured data with set schemas using connectors (Akri) at the edge all the way to destinations like Microsoft Fabric. 
+
+**Azure Device Registry (ADR)**: A unified registry for devices and assets across edge and cloud, acting as the single source of truth for asset metadata. In the cloud, assets are projected as Azure Resource Manager (ARM) resources, enabling management through Azure features scuh as resource groups, tags, RBAC, and policy, and integration with services like Resource Graph. At the edge, ADR creates Kubernetes custom resources for each asset and keeps cloud and edge representations synchronized. This ensures consistency across cloud and edge and simplifies lifecycle management through Azure-native tools.
+
+**Digital Twin Builder(DTB)** *(preview)*: A new component within the Real-Time Intelligence workload in Microsoft Fabric that creates digital representations of real-world assets and processes using imported models and operational data. With DTB, customers can leverage low-code/no-code tools for modeling business concepts, building KPIs (such as OEE), and enabling advanced analytics for operational optimization. 
+
 
 ![OneDOArchitecture](./doc/images/one_do_architecture.png "One DO Architecture")
 
 ## **Why this matters:**
 
-- **Single Pane of Glass**: All your operational data: models, assets, and telemetry, are accessible and actionable from Microsoft Fabric. 
+- **Single Pane of Glass**: All your operational data—models, assets, and telemetry—is accessible and actionable from Microsoft Fabric. 
 
 - **Edge-to-Cloud Integration**: Data flows smoothly from devices at the edge, through the cloud, and into the applications of your choice. 
 
-- **Operational Insights**: Enable use cases like remote monitoring, predictive maintenance, and more, without manual integration.
+- **Operational Insights**: Seamlessly unlock scenarios like remote monitoring, predictive maintenance, and performance optimization.
 
-- **Accelerated Onboarding**: Use Microsoft-curated models and streamlined setup to reduce time-to-value for new assets and scenarios. 
+- **Accelerated Onboarding**: Use Microsoft-curated models and streamlined setup to reduce time-to-value for new assets and use cases.
 
-- **Scalability & Flexibility**: Supports model-based data transformation at scale, BYO models from GitHub, and integration with Azure IoT Hub in later releases. 
+- **Scalability & Flexibility**: Supports model-based data transformation at scale and future integration with Azure IoT Hub.
 
 ## **How Data Comes Together**
 
-#### 1. Model Management Workflow
-- Microsoft-curated Asset definition, derived from OPC UA companion specs, define asset types and capabilities. These definitions are imported into DTB for entity creation and used in Azure IoT operations for asset discovery and selection. 
+#### 1. Model Management
+Microsoft-curated Asset definition, derived from OPC UA companion specifications, define asset types and capabilities. These definitions are:
 
-- Within Azure IoT operations, definitions are embedded in device endpoint configurations, enabling the discovery handler to identify matching assets. DTB models these definitions as entity types for downstream operations. 
+- Embedded in device endpoint configurations within Azure IoT Operations, enabling the discovery handler to automatically identify matching assets.
 
-- As a result, no manual model uploads are required and customers benefit from a curated, ready-to-use model library, ensuring consistency and accelerating onboarding.  
+- Imported into Digital Twin Builder for entity creation, where they are modeled as entity types for downstream operations.
 
-#### 2. Asset Data Ingestion Workflow 
+As a result, no manual model uploads are required and customers benefit from a curated, ready-to-use model library, ensuring consistency and accelerating onboarding.  
 
-- Assets are discovered via OPC UA handlers and onboarded into Azure Device Registry (ADR) with rich metadata. The ADR connector ingests these assets into a Lakehouse table in Microsoft Fabric, filtering by asset type, preserving all metadata and lineage. 
+#### 2. Asset Metadata Ingestion
 
-- Customers create entities in DTB based on the imported definitions, then manually map these entities to records in the ADR Lakehouse table using asset UUIDs or external IDs.  
+- Assets are discovered via OPC UA handlers and onboarded into Azure Device Registry with rich metadata.
+  
+- Using Dataflow Gen2 in Microsoft Fabric, these assets are ingested from ADR into a Lakehouse table. Filtering by asset type can also be applied within the Dataflow Gen2, ensuring only relevant assets are processed while preserving all metadata and lineage.
 
-- As a result, Customers gain full control and visibility over asset onboarding and mapping, ensuring data integrity and traceability across the stack.  
+- Customers then create entities in Digital Twin Builder (DTB) based on the imported definitions and manually map these entities to records in the ADR Lakehouse table using asset UUIDs or external IDs.
 
-#### 3. Streaming Data Flow 
+This process gives customers full control and visibility over asset onboarding and mapping, ensuring data integrity and traceability across the entire stack.
 
-- Once assets are configured and operational, the AIO connector publishes telemetry to the MQ broker and using AIO’s dataflow the data is sent to Fabric destination namely Eventstream with Cloud Events headers. DTB entities ingest this telemetry directly from Eventstream. 
+#### 3. Real-Time Telemetry Streaming
 
-- Messages must conform to the model’s structure and naming; no transformation or schema mapping is allowed at this stage for private preview to retain the structure of message. DTB relies on typeref and field name alignment for ingestion. 
+- Once assets are configured and operational, AIO publishes telemetry to an MQ broker and routes it via AIO Dataflow to an Eventstream destination in Microsoft Fabric, using CloudEvents headers.
+- DTB ingests telemetry directly from Eventstream, relying on strict alignment with the model’s structure and naming.
+  
+  > **Note:** Messages must conform to the model’s structure and naming; no transformation or schema mapping is allowed at this stage for private preview to retain the structure of message. DTB relies on typeref and field name alignment for ingestion.
+  
 
-- Hence, real-time, model-aware telemetry ingestion enables immediate operational insights, with minimal setup and no need for manual schema management.
-
+This enables real-time, model-aware telemetry ingestion, delivering immediate operational insights with minimal setup and no manual schema management.
 
 # Prerequisites
 
