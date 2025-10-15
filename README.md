@@ -1,6 +1,6 @@
-# One DO Experience - ADR, AIO, DTB
+# One Digital Operations Experience - ADR, AIO, DTB
 
-## Table of Contents
+### Table of Contents
 
 - [Overview](#overview)
   
@@ -14,7 +14,7 @@
   
 - [Step 3: Create Digital Representations of Assets](#step-3-create-digital-representations-in-digital-twin-builder)
 
-## Overview
+# Overview
 
 This private preview introduces powerful integration capabilities that enable customers to **seamlessly port assets from Azure Device Registry (ADR), their data models, and operational data from Azure IoT Operations (AIO) into Digital Twin Builder (DTB) within Microsoft Fabric**.   By consolidating contextual and operational data in one place, this integration eliminates manual steps and fragmented workflows, allowing users to unlock the full value of their digital operations by transforming raw data into actionable insights with minimal effort.
 
@@ -63,70 +63,85 @@ This private preview introduces powerful integration capabilities that enable cu
 
 - Hence, real-time, model-aware telemetry ingestion enables immediate operational insights, with minimal setup and no need for manual schema management.
 
---- 
 
 # Prerequisites
 
-- An Azure subscription. 
+- An **Azure subscription**
   
-- A deployed Azure IoT Operations instance (version 1.2.x).
+- A deployed **Azure IoT Operations instance** (v1.2.x)
   
-- An Azure Device Registry namespace to store your namespace assets and devices.
+- An **Azure Device Registry namespace** to store your namespace assets and devices
 
-- A Microsoft Fabric subscription. In your subscription, you need access to a workspace with Contributor or above permissions.
+- A **Microsoft Fabric tenant** that allows the creation of real-time dashboards and a **subscription** with access to a **workspace** with Contributor or above permissions.
+  > For more information, see [Enable tenant settings in the admin portal](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/dashboard-real-time-create#enable-tenant-settings-in-the-admin-portal)
   
-- A Fabric tenant that allows the creation of real-time dashboards. Your tenant administrator can enable this setting. For more information, see [Enable tenant settings in the admin portal](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/dashboard-real-time-create#enable-tenant-settings-in-the-admin-portal).
-  
-- A Digital Twin Builder item in Microsoft Fabric. See [Digital Twin Builder (Preview) Tutorial: Set Up Resources](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/digital-twin-builder/tutorial-1-set-up-resources) for more details.
+- A **Digital Twin Builder item** in Microsoft Fabric
+  > For more information, see [Digital Twin Builder (Preview) Tutorial: Set Up Resources](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/digital-twin-builder/tutorial-1-set-up-resources)
 
----
 
 # Step 0: Onboard Deployment Scripts
+Before proceeding, complete the following *[QuickStart Setup](./doc/QUICK_START_INIT.md)* to onboard the automation scripts into your environment.
 
-> [!IMPORTANT]
-> Some steps require using automation scripts, while others can be performed manually or through scripts. 
+> [!NOTE]
+> Some steps require using automation scripts, while others can be performed either manually or through scripts. 
 >
-Before proceeding, complete the following [QuickStart Setup](./doc/QUICK_START_INIT.md) to onboard the automation scripts into your environment.
+
 
 # Step 1: Discover and Import OPC UA Assets
 
-Identify, annotate, and onboard OPC UA assets by asset type at the edge using **Akri** and **Azure IoT Operations**. While some steps can be performed directly in the [Operations Experience](https://iotoperations.azure.com/) portal, others must be completed using the provided setup scripts.
+Identify, annotate, and onboard OPC UA assets by asset type at the edge using Akri and Azure IoT Operations. While some steps can be performed directly in the [Operations Experience](https://iotoperations.azure.com/) portal, others must be completed using the provided setup scripts.
  
 ### 1. Create an OPC Publisher Akri Connector
-Use the following script to create an OPC Publisher and connect it to your MQ:
-```bash
-./deploy_opc_publisher_template.sh \
-./deploy_opc_publisher_instance.sh
-```
+Use the following two scripts to set up an OPC Publisher as an Akri connector.
+<details>
+<summary>Click to expand/collapse the steps</summary>
+
+
+1. **Create the Connector Template**
+   
+   This script creates and registers an Akri Connector Template that defines how OPC Publisher should run at the edge—including its image, configuration, and schema bindings.
+   ```bash
+   ./deploy_opc_publisher_template.sh
+   ```
+
+3. **Provision the Connector Instance**
+   
+   This script then provisions a live Connector instance based on that template, allowing Azure IoT Operations to automatically deploy and link it to discovered OPC UA devices and endpoints.
+   ```bash
+   ./deploy_opc_publisher_instance.sh
+   ```
+</details>
+
 ### 2. (Optional) Deploy Simulation Layer
 
-Deploy the **UMATI MachineTool Simulator**, which generates realistic OPC UA MachineTool telemetry using the [UMATI Sample Server](https://github.com/umati/Sample-Server).
-This is a simple way to ingest data **without needing real devices or assets connected**.
+Run the following script to deploy the **UMATI MachineTool Simulator**, which generates realistic OPC UA MachineTool telemetry using the [UMATI Sample Server](https://github.com/umati/Sample-Server).
+This is a simple way to ingest data without needing real devices or assets connected.
+
 ```bash 
 ./deploy_umati.sh
  ```
 
 ### 3. Create Devices, Discover and Import Assets 
-Create a device with an OPCUA device inbound endpoint and enable it for discovery to start importing assets using the Operations Experience UI: *[Create Devices, Discover and Import Assets](./doc/CREATE_DEVICES_AND_ASSETS.md)*.
+Create a device with an OPC UA device inbound endpoint and enable it for discovery to start importing assets using the *[Operations Experience](./doc/CREATE_DEVICES_AND_ASSETS.md)*.
 
-> [!NOTE]
-> For more details on managing resources in the Operations Experience UI, see [Manage resources in the operations experience UI](https://learn.microsoft.com/en-us/azure/iot-operations/discover-manage-assets/howto-use-operations-experience).
+> ⚡ **Fast-Track:** Run the following scripts to automate asset endpoint creation and asset onboarding:
+> ```bash 
+> ./register_umati_device.sh \
+> ./onboard_fullmachine.sh
+> ```
+> See *[Onboarding UMATI Assets](./doc/CREATE_DEVICES_AND_ASSETS.md)* for more details.
 
-> ⚡ **Fast-Track:** Run the following script to automate asset endpoint creation and asset onboarding:
-```bash 
-./register_umati_device.sh \
-./onboard_fullmachine.sh
-```
-> See [Onboarding UMATI Assets](./doc/CREATE_DEVICES_AND_ASSETS.md) for more details.
 
----
+
 # Step 2: Send Asset Data to Microsoft Fabric
 
-## Ingest Asset Telemetry 
+### 1. Ingest Asset Telemetry from Azure IoT Operations
 Ingest asset telemetry from Azure IoT Operations (AIO) into a Lakehouse table within Microsoft Fabric. Once ingested, the telemetry can then be mapped to entities in Digital Twin Builder, enabling rich digital representations of assets.
+<details>
+<summary>Click to expand/collapse the steps</summary>
 
-### 1. Create an Eventstream in Microsoft Fabric 
-Set up an Eventstream destination to receive telemetry using the Microsoft Fabric UI: *[Create an Eventstream in Microsoft Fabric](./doc/CREATE_EVENTSTREAM.md)*.
+#### 1. Create an Eventstream in Microsoft Fabric 
+Set up an Eventstream destination to receive telemetry using the *[Microsoft Fabric UI](./doc/CREATE_EVENTSTREAM.md)*.
 
 > ⚡ **Fast-Track:** Run the following script to automate Eventstream creation.
 > 
@@ -143,26 +158,32 @@ Set up an Eventstream destination to receive telemetry using the Microsoft Fabri
 >
 >./deploy_eventstream.sh
 >```
-> ⚠️ Treat that file as a secret and delete it once your deployment is configured.
+> *⚠️ Treat that file as a secret and delete it once your deployment is configured.*
 >
 
-### 2. Create an Azure IoT Operations Dataflow 
-Configure a Dataflow to route telemetry from AIO to your Eventstream via the Operations Experience: *[Create a Dataflow](./doc/CREATE_DATAFLOW.md)*.
+#### 2. Create an Azure IoT Operations Dataflow 
+Configure a Dataflow to route telemetry from AIO to your Eventstream via the *[Operations Experience](./doc/CREATE_DATAFLOW.md)*.
 
 > ⚡ **Fast-Track:** Run the following script to automate Dataflow creation:
 >```bash
 >./deploy_dataflow.sh
 >```
 >
-> ⚠️ This fast-track script can only be used if the Eventstream was created using the fast-track script from the previous step.
+> *⚠️ This fast-track script can only be used if the Eventstream was created using the fast-track script from the previous step.*
 
-### 3. Setup Eventstream for Telemetry Ingestion in Microsoft Fabric 
+#### 3. Setup Eventstream for Telemetry Ingestion in Microsoft Fabric 
 See *[Ingest Asset Telemetry to Microsoft Fabric](./doc/EVENTSTREAM_TELEMETRY_FABRIC.md)* for full instructions.
 
-## Ingest Asset Metadata from Azure Device Registry
-Ingest asset metadata stored in Azure Device Registry (ADR) into a Lakehouse table within Microsoft Fabric. This metadata provides essential context, such as version, manufacturer, location, and custom attributes, that can be mapped to entities in Digital Twin Builder. When combined with telemetry data, it enables more accurate modeling, monitoring, and analysis of your assets and operations. See *[Ingest Asset Metadata from ADR to Microsoft Fabric](doc/INGEST_ADR_METADATA.md)* for full instructions.
+</details>
 
----
+### 2. Ingest Asset Metadata from Azure Device Registry
+Ingest asset metadata stored in Azure Device Registry (ADR) into a Lakehouse table within Microsoft Fabric. This metadata provides essential context, such as version, manufacturer, location, and custom attributes, that can be mapped to entities in Digital Twin Builder. When combined with telemetry data, it enables more accurate modeling, monitoring, and analysis of your assets and operations.
+
+See *[Ingest Asset Metadata from ADR to Microsoft Fabric](doc/INGEST_ADR_METADATA.md)* for full instructions.
+
+
+
+
 # Step 3: Create Digital Representations in Digital Twin Builder
 Use the imported metadata and telemetry of assets to build rich digital representations in Digital Twin Builder (preview).
 
