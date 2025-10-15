@@ -119,7 +119,7 @@ Create a device with an OPCUA device inbound endpoint and enable it for discover
 > See [Onboarding UMATI Assets](./doc/CREATE_DEVICES_AND_ASSETS.md) for more details.
 
 ---
-# Step 2: Send Asset data to Microsoft Fabric
+# Step 2: Send Asset Data to Microsoft Fabric
 
 ## Ingest Asset Telemetry 
 Ingest asset telemetry from Azure IoT Operations (AIO) into a Lakehouse table within Microsoft Fabric. Once ingested, the telemetry can then be mapped to entities in Digital Twin Builder, enabling rich digital representations of assets.
@@ -162,7 +162,7 @@ See *[Ingest Asset Telemetry to Microsoft Fabric](./doc/EVENTSTREAM_TELEMETRY_FA
 Ingest asset metadata stored in Azure Device Registry (ADR) into a Lakehouse table within Microsoft Fabric. This metadata provides essential context, such as version, manufacturer, location, and custom attributes, that can be mapped to entities in Digital Twin Builder. When combined with telemetry data, it enables more accurate modeling, monitoring, and analysis of your assets and operations. See *[Ingest Asset Metadata from ADR to Microsoft Fabric](doc/INGEST_ADR_METADATA.md)* for full instructions.
 
 ---
-# Step 3: Create Digital Representations of Assets with Digital Twin Builder
+# Step 3: Create Digital Representations in Digital Twin Builder
 Use the imported metadata and telemetry of assets to build rich digital representations in Digital Twin Builder.
 
 ### 1. Add Entity Types
