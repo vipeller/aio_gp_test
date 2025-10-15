@@ -12,11 +12,11 @@
   
 - [Step 2: Send Asset data to Microsoft Fabric](#step-2-send-asset-data-to-microsoft-fabric)
   
-- [Step 3: Create Digital Representations of Assets](#step-3-create-digital-representations-of-assets-in-digital-twin-builder)
+- [Step 3: Create Digital Representations of Assets](#step-3-create-digital-representations-in-digital-twin-builder)
 
 ## Overview
 
-This private preview introduces powerful integration capabilities that enable customers to **seamlessly port assets from Azure Device Registry (ADR), their data models, and operational data from Azure IoT Operations (AIO) into Digital Twin Builder *preview* (DTB) within Microsoft Fabric**.   By consolidating contextual and operational data in one place, this integration eliminates manual steps and fragmented workflows, allowing users to unlock the full value of their digital operations by transforming raw data into actionable insights with minimal effort.
+This private preview introduces powerful integration capabilities that enable customers to **seamlessly port assets from Azure Device Registry (ADR), their data models, and operational data from Azure IoT Operations (AIO) into Digital Twin Builder (DTB) within Microsoft Fabric**.   By consolidating contextual and operational data in one place, this integration eliminates manual steps and fragmented workflows, allowing users to unlock the full value of their digital operations by transforming raw data into actionable insights with minimal effort.
 
 ## How Each Service Fits In 
 
@@ -24,7 +24,7 @@ This private preview introduces powerful integration capabilities that enable cu
 
 **Azure Device Registry (ADR)**: A single unified registry for devices and assets across applications running in the cloud or on the edge. In the cloud, assets are represented as Azure resources, enabling management through Azure features like resource groups, tags, RBAC, and policy. On the edge, ADR creates Kubernetes custom resources for each asset and keeps cloud and edge representations in sync. It is the single source of truth for asset metadata, ensuring consistency and allowing customers to manage assets using Azure Resource Manager, APIs, and tools like Azure Resource Graph. 
 
-**Digital Twin Builder *preview* (DTB)**: A new component within the Real-Time Intelligence workload in Microsoft Fabric. It creates digital representations of real-world assets and processes using imported models and operational data. With DTB, customers can leverage low-code/no-code tools for modeling business concepts, building KPIs (such as OEE), and enabling advanced analytics for operational optimization. 
+**Digital Twin Builder (preview) (DTB)**: A new component within the Real-Time Intelligence workload in Microsoft Fabric. It creates digital representations of real-world assets and processes using imported models and operational data. With DTB, customers can leverage low-code/no-code tools for modeling business concepts, building KPIs (such as OEE), and enabling advanced analytics for operational optimization. 
 
 ## **Why this matters:**
 
@@ -162,8 +162,8 @@ See *[Ingest Asset Telemetry to Microsoft Fabric](./doc/EVENTSTREAM_TELEMETRY_FA
 Ingest asset metadata stored in Azure Device Registry (ADR) into a Lakehouse table within Microsoft Fabric. This metadata provides essential context, such as version, manufacturer, location, and custom attributes, that can be mapped to entities in Digital Twin Builder. When combined with telemetry data, it enables more accurate modeling, monitoring, and analysis of your assets and operations. See *[Ingest Asset Metadata from ADR to Microsoft Fabric](doc/INGEST_ADR_METADATA.md)* for full instructions.
 
 ---
-# Step 3: Create Digital Representations in Digital Twin Builder *preview*
-Use the imported metadata and telemetry of assets to build rich digital representations in Digital Twin Builder *preview*.
+# Step 3: Create Digital Representations in Digital Twin Builder
+Use the imported metadata and telemetry of assets to build rich digital representations in Digital Twin Builder (preview).
 
 ### 1. Add Entity Types
 Add entity types to your Digital Twin Builder ontology to later hydrate instances with data: *[Create Entities in DTB](./doc/DTB_ENTITY_CREATION.md)*
