@@ -82,12 +82,11 @@ This private preview introduces powerful integration capabilities that enable cu
 
 
 # Step 0: Onboard Deployment Scripts
-Before proceeding, complete the following *[QuickStart Setup](./doc/QUICK_START_INIT.md)* to onboard the automation scripts into your environment.
-
 > [!NOTE]
 > Some steps require using automation scripts, while others can be performed either manually or through scripts. 
 >
 
+Before proceeding, complete the following *[QuickStart Setup](./doc/QUICK_START_INIT.md)* to onboard the automation scripts into your environment.
 
 # Step 1: Discover and Import OPC UA Assets
 
@@ -98,20 +97,19 @@ Use the following two scripts to set up an OPC Publisher as an Akri connector.
 <details>
 <summary>Click to expand/collapse the steps</summary>
 
+#### 1. Create the Connector Template
+This script creates and registers an Akri Connector Template that defines how OPC Publisher should run at the edge—including its image, configuration, and schema bindings.
 
-1. **Create the Connector Template**
-   
-   This script creates and registers an Akri Connector Template that defines how OPC Publisher should run at the edge—including its image, configuration, and schema bindings.
-   ```bash
-   ./deploy_opc_publisher_template.sh
-   ```
+```bash
+./deploy_opc_publisher_template.sh
+```
 
-3. **Provision the Connector Instance**
-   
-   This script then provisions a live Connector instance based on that template, allowing Azure IoT Operations to automatically deploy and link it to discovered OPC UA devices and endpoints.
-   ```bash
-   ./deploy_opc_publisher_instance.sh
-   ```
+#### 3. Provision the Connector Instance
+This script then provisions a live Connector instance based on that template, allowing Azure IoT Operations to automatically deploy and link it to discovered OPC UA devices and endpoints.
+
+```bash
+./deploy_opc_publisher_instance.sh
+```
 </details>
 
 ### 2. (Optional) Deploy Simulation Layer
@@ -133,8 +131,6 @@ Create a device with an OPC UA device inbound endpoint and enable it for discove
 > ```
 > See *[Onboarding UMATI Assets](./doc/CREATE_DEVICES_AND_ASSETS.md)* for more details.
 
-
-
 # Step 2: Send Asset Data to Microsoft Fabric
 
 ### 1. Ingest Asset Telemetry from Azure IoT Operations
@@ -142,15 +138,18 @@ Ingest asset telemetry from Azure IoT Operations (AIO) into a Lakehouse table wi
 <details>
 <summary>Click to expand/collapse the steps</summary>
 
-#### 1. Create an Eventhouse and Eventstream in Microsoft Fabric 
-Set up an Eventhouse and Eventstream destination to receive telemetry using the *[Microsoft Fabric UI](./doc/CREATE_EVENTSTREAM.md)*.
+#### 1. Create an Eventhouse in Microsoft Fabric
+Create an Eventhouse where telemetry will land using the *[Microsoft Fabric UI](./doc/CREATE_EVENTHOUSE.md)*.
+
+#### 2. Create an Eventstream in Microsoft Fabric
+Set up an Eventstream destination to receive and process telemetry using the *[Microsoft Fabric UI](./doc/CREATE_EVENTSTREAM.md)*.
 
 > ⚡ **Fast-Track:** Run the following script to automate Eventstream creation.
-> 
+>
 > This script:
-> - Creates a Fabric Eventhouse and Eventstream.
+> - Creates a Fabric Eventstream.
 > - Saves source credentials to `./creds/dtb_hub_cred.json`.
->   
+>
 >```bash
 ># Optional: use a specific Fabric workspace instead of "My workspace"
 ># export FABRIC_WORKSPACE_ID="<workspace-guid>"
@@ -160,6 +159,7 @@ Set up an Eventhouse and Eventstream destination to receive telemetry using the 
 >
 >./deploy_eventstream.sh
 >```
+>
 > *⚠️ Treat that file as a secret and delete it once your deployment is configured.*
 >
 
