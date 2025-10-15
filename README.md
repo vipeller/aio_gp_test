@@ -84,8 +84,9 @@ This private preview introduces powerful integration capabilities that enable cu
 # Step 0: Onboard deployment scripts
 
 > [!IMPORTANT]
-> Some steps require using automation scripts, while others can be performed manually or through scripts. Before proceeding, ensure you’ve completed the [QuickStart Setup](./doc/QUICK_START_INIT.md)
- to onboard the scripts into your environment.
+> Some steps require using automation scripts, while others can be performed manually or through scripts. 
+>
+Before proceding, complete the following [QuickStart Setup](./doc/QUICK_START_INIT.md) to onboard the automation scripts into your environment.
 
 # Step 1: Discover and Import OPC UA Assets
 
