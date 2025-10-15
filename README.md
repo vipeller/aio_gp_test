@@ -90,7 +90,7 @@ Before proceeding, complete the following [QuickStart Setup](./doc/QUICK_START_I
 
 # Step 1: Discover and Import OPC UA Assets
 
-Identify, annotate, and onboard OPC UA assets by asset type at the edge using **Akri** and **Azure IoT Operations**. While some steps can be performed directly in the [Operations Experience](https://iotoperations.azure.com/) portal, others — or certain portions of them — must be completed using the provided setup scripts.
+Identify, annotate, and onboard OPC UA assets by asset type at the edge using **Akri** and **Azure IoT Operations**. While some steps can be performed directly in the [Operations Experience](https://iotoperations.azure.com/) portal, others must be completed using the provided setup scripts.
  
 ### 1. Create an OPC Publisher Akri Connector
 Use the following script to create an OPC Publisher and connect it to your MQ:
