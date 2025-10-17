@@ -11,7 +11,7 @@ if [[ -z "$SUBSCRIPTION_ID" || -z "$RESOURCE_GROUP" ]]; then
   exit 1
 fi
 
-API="2025-07-01-preview"
+API="2025-10-01"
 
 echo "[INFO] Discovering Azure IoT Operations resources in RG=$RESOURCE_GROUP, SUB=$SUBSCRIPTION_ID..." >&2
 

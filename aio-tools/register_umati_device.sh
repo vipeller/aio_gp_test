@@ -27,7 +27,7 @@ HELM_CHART_PATH="${HELM_CHART_PATH:-}"
 
 COUNT="${COUNT:-1}"                              # number of simulator instances
 TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-300}"        # helm/kubectl wait budget (seconds)
-API="${API:-2025-07-01-preview}"
+API="${API:-2025-10-01}"
 
 log "Inputs:"
 log "  SUBSCRIPTION_ID   = $SUBSCRIPTION_ID"

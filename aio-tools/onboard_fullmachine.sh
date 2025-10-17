@@ -15,7 +15,7 @@ err()  { printf '[%s] [ERR ] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
 : "${INSTANCE_NAME:?set INSTANCE_NAME}"
 
 # -------- tunables --------
-API="${API:-2025-07-01-preview}"
+API="${API:-2025-10-01}"
 PREFIX="${PREFIX:-fullmachinetool-}"
 WAIT_INTERVAL_SEC="${WAIT_INTERVAL_SEC:-10}"
 WAIT_TIMEOUT_SEC="${WAIT_TIMEOUT_SEC:-900}"   # 15 min default

@@ -13,7 +13,7 @@ err()  { printf '[%s] [ERR ] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
 : "${INSTANCE_NAME:?set INSTANCE_NAME}"     # AIO instance name
 : "${TEMPLATE_NAME:?set TEMPLATE_NAME}"     # Akri Connector Template name
 : "${CONNECTOR_NAME:?set CONNECTOR_NAME}"   # Akri Connector (instance) name
-API="2025-07-01-preview"
+API="2025-10-01"
 
 log "Inputs:"
 log "  SUBSCRIPTION_ID = $SUBSCRIPTION_ID"

@@ -110,24 +110,13 @@ Before proceeding, complete the following *[QuickStart Setup](./doc/QUICK_START_
 Identify, annotate, and onboard OPC UA assets by asset type at the edge using Akri and Azure IoT Operations. While some steps can be performed directly in the [Operations Experience](https://iotoperations.azure.com/) portal, others must be completed using the provided setup scripts.
  
 ### 1. Create an OPC Publisher Akri Connector
-Use the following two scripts to set up an OPC Publisher as an Akri connector.
-<details>
-<summary>Click to expand/collapse the steps</summary>
+Use the following script to set up an OPC Publisher as an Akri connector.
 
-#### 1. Create the Connector Template
 This script creates and registers an Akri Connector Template that defines how OPC Publisher should run at the edge—including its image, configuration, and schema bindings.
 
 ```bash
 ./deploy_opc_publisher_template.sh
 ```
-
-#### 3. Provision the Connector Instance
-This script then provisions a live Connector instance based on that template, allowing Azure IoT Operations to automatically deploy and link it to discovered OPC UA devices and endpoints.
-
-```bash
-./deploy_opc_publisher_instance.sh
-```
-</details>
 
 ### 2. (Optional) Deploy Simulation Layer
 

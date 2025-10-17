@@ -14,11 +14,11 @@ err()  { printf '[%s] [ERR ] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
 : "${SCHEMA_REGISTRY_NAME:?set SCHEMA_REGISTRY_NAME}"
 SCHEMA_DIR="${SCHEMA_DIR:-./iotops}"
 TEMPLATE_NAME="${TEMPLATE_NAME:-opc-publisher}"
-API_VER="2025-07-01-preview"
+API_VER="2025-10-01"
 
 IMAGE_NAME="iotedge/opc-publisher"
 IMAGE_REGISTRY="mcr.microsoft.com"
-IMAGE_TAG="2.9.15-preview5"
+IMAGE_TAG="2.9.15"
 IMAGE_PULL_POLICY="Always"
 
 # -------- tools check --------
@@ -69,89 +69,7 @@ fi
 EXT_LOC_TYPE="${EXT_LOC_TYPE:-CustomLocation}"
 ok "extendedLocation: name=$EXT_LOC_NAME type=$EXT_LOC_TYPE"
 
-# -------- schema helpers --------
-schemas=(
-  "opc-publisher-endpoint-schema|OPC Publisher Endpoint Schema"
-  "opc-publisher-dataset-schema|OPC Publisher Dataset Schema"
-  "opc-publisher-event-schema|OPC Publisher Event Schema"
-  "opc-publisher-dataset-datapoint-schema|OPC Publisher ConnectorType Template"
-)
-
-# returns schema id on stdout (do NOT echo to stdout anything else)
-get_or_create_schema() {
-  local disp="$1"
-  local desc="$2"
-  local name="${disp//-/}"
-  local schema_path="${SCHEMA_DIR%/}/$disp.json"
-
-  # sanity
-  if [[ ! -s "$schema_path" ]]; then
-    err "Missing schema file: $schema_path"
-    exit 1
-  fi
-
-  # try get
-  local id
-  id="$(az iot ops schema show \
-        --resource-group "$RESOURCE_GROUP" \
-        --registry "$SCHEMA_REGISTRY_NAME" \
-        --name "$name" \
-        --subscription "$SUBSCRIPTION_ID" \
-        -o tsv --query id 2>/dev/null || true)"
-
-  if [[ -z "$id" ]]; then
-    log "Creating schema '$disp' in registry '$SCHEMA_REGISTRY_NAME'…"
-    id="$(az iot ops schema create \
-          --resource-group "$RESOURCE_GROUP" \
-          --registry "$SCHEMA_REGISTRY_NAME" \
-          --name "$name" \
-          --display-name "$disp" \
-          --version-content "$schema_path" \
-          --version 1 \
-          --desc "$desc" \
-          --version-desc "$disp (v1)" \
-          --format json \
-          --type message \
-          --subscription "$SUBSCRIPTION_ID" \
-          -o tsv --query id)"
-    ok "Created schema: $id"
-  else
-    log "Schema exists: $id"
-  fi
-
-  printf '%s\n' "$id"
-}
-
-# -------- ensure required schemas exist --------
-log "Ensuring required schemas exist (and capturing their IDs)…"
-schema_ids=()
-for entry in "${schemas[@]}"; do
-  IFS='|' read -r disp desc <<<"$entry"
-  schema_ids+=( "$(get_or_create_schema "$disp" "$desc")" )
-done
-ADD_ID="${schema_ids[0]}"
-DS_ID="${schema_ids[1]}"
-EV_ID="${schema_ids[2]}"
-ok "Schema IDs:"
-ok "add=$ADD_ID"
-ok "dataset=$DS_ID"
-ok "events=$EV_ID"
-
-SCHEMA_VER="${SCHEMA_VER:-1}"
-
-# map display names -> hyphenless names expected by the ref
-add_nohyphen="opcpublisherendpointschema"
-ds_nohyphen="opcpublisherdatasetschema"
-ev_nohyphen="opcpublishereventschema"
-
-ADD_ID="aio-sr://${SCHEMA_REGISTRY_NAME}/${add_nohyphen}:${SCHEMA_VER}"
-DS_ID="aio-sr://${SCHEMA_REGISTRY_NAME}/${ds_nohyphen}:${SCHEMA_VER}"
-EV_ID="aio-sr://${SCHEMA_REGISTRY_NAME}/${ev_nohyphen}:${SCHEMA_VER}"
-
-ok "Using AIO Schema Registry refs:"
-ok "  additionalConfigSchemaRef: $ADD_ID"
-ok "  defaultDatasetConfigSchemaRef: $DS_ID"
-ok "  defaultEventsConfigSchemaRef: $EV_ID"
+CONNECTOR_METADATA_REF="${IMAGE_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}-metadata"
 
 # -------- build connector template body --------
 log "Composing Akri Connector Template body…"
@@ -160,11 +78,9 @@ BODY="$(jq -n \
   --arg extType "$EXT_LOC_TYPE" \
   --arg imageName "$IMAGE_NAME" \
   --arg registry "$IMAGE_REGISTRY" \
+  --arg connectorMetadataRef "$CONNECTOR_METADATA_REF" \
   --arg tag "$IMAGE_TAG" \
   --arg pull "$IMAGE_PULL_POLICY" \
-  --arg addId "$ADD_ID" \
-  --arg dsId "$DS_ID" \
-  --arg evId "$EV_ID" \
   '{
     extendedLocation: { name: $extName, type: $extType },
     properties: {
@@ -189,7 +105,10 @@ BODY="$(jq -n \
             AioNetworkDiscoveryMode: null,
             AioNetworkDiscoveryInterval: null,
             DisableDataSetMetaData: "True",
-            LogFormat: "syslog"
+            LogFormat: "syslog",
+            PkiRootPath: "/var/tmp/pki",
+            PublishedNodesFile: "/var/tmp/pn.json",
+            CreatePublishFileIfNotExist: "True"
           },
           allocation: { policy: "Bucketized", bucketSize: 1 }
         }
@@ -198,15 +117,11 @@ BODY="$(jq -n \
         {
           endpointType: "Microsoft.OpcPublisher",
           version: "2.9",
-          description: "OPC Publisher managed OPC UA server",
-          configurationSchemaRefs: {
-            additionalConfigSchemaRef: $addId,
-            defaultDatasetConfigSchemaRef: $dsId,
-            defaultEventsConfigSchemaRef: $evId
-          }
+          displayName: "OPC Publisher"
         }
       ],
       diagnostics: { logs: { level: "info" } },
+      connectorMetadataRef: $connectorMetadataRef,
       mqttConnectionConfiguration: {
         host: "aio-broker:18883",
         authentication: {

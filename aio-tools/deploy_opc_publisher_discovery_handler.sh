@@ -11,7 +11,7 @@ err()  { printf '[%s] [ERR ] %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
 : "${SUBSCRIPTION_ID:?set SUBSCRIPTION_ID}"
 : "${RESOURCE_GROUP:?set RESOURCE_GROUP}"
 : "${INSTANCE_NAME:?set INSTANCE_NAME}"
-API="${API:-2025-07-01-preview}"
+API="${API:-2025-10-01}"
 DH_NAME="${DH_NAME:-opc-publisher}"     # discovery handler resource name
 
 log "Inputs:"
