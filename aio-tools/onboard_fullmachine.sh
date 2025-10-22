@@ -137,7 +137,7 @@ BODY="$(jq -c -n \
       discoveredAssetRefs: [$props.discoveryId],
       assetTypeRefs: $props.assetTypeRefs,
       datasets: $props.datasets,
-      events: $props.events,
+      eventGroups: $props.eventGroups,
       streams: $props.streams,
       managementGroups: $props.managementGroups
     }
